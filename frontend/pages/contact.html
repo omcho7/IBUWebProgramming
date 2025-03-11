@@ -1,0 +1,62 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-6">
+      <h2>Contact</h2>
+      <p>Reach out to us anytime.</p>
+      <ul class="list-unstyled">
+        <li><strong>Address:</strong> 123 Nutrition St, Wellness City</li>
+        <li><strong>Email:</strong> info@nutrilife.com</li>
+        <li><strong>Phone:</strong> (123) 456-7890</li>
+      </ul>
+      <h5>Follow Us</h5>
+      <ul class="list-unstyled">
+        <li><a href="#">Facebook</a></li>
+        <li><a href="#">Twitter</a></li>
+        <li><a href="#">Instagram</a></li>
+      </ul>
+    </div>
+    <div class="col-md-6">
+      <h2>Contact Form</h2>
+      <form>
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            placeholder="Enter your full name"
+          />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            placeholder="Enter your email"
+          />
+        </div>
+        <div class="form-group">
+          <label for="topic">Topic</label>
+          <select class="form-control" id="topic" onchange="toggleOtherTopic()">
+            <option value="consultation">Consultation</option>
+            <option value="meal-plans">Meal Plans</option>
+            <option value="support">Support</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea
+            class="form-control"
+            id="message"
+            rows="4"
+            placeholder="Enter your message"
+          ></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>

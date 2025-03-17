@@ -1,21 +1,36 @@
 <div class="container mt-5">
-  <div class="row">
-    <div class="col-md-6">
+  <div class="row contactSection">
+    <div class="col-md-6 contactInfo">
       <h2>Contact</h2>
       <p>Reach out to us anytime.</p>
-      <ul class="list-unstyled">
+      <ul class="list-unstyled infoList">
         <li><strong>Address:</strong> 123 Nutrition St, Wellness City</li>
         <li><strong>Email:</strong> info@nutrilife.com</li>
         <li><strong>Phone:</strong> (123) 456-7890</li>
       </ul>
-      <h5>Follow Us</h5>
+
       <ul class="list-unstyled">
-        <li><a href="#">Facebook</a></li>
-        <li><a href="#">Twitter</a></li>
-        <li><a href="#">Instagram</a></li>
+        <li class="infoItem">
+          <span class="infoSpan"
+            ><i class="bi bi-facebook"></i
+            ><a href="#" class="infoSocials">Facebook</a></span
+          >
+        </li>
+        <li class="infoItem">
+          <span class="infoSpan"
+            ><i class="bi bi-twitter"></i
+            ><a href="#" class="infoSocials">Twitter</a></span
+          >
+        </li>
+        <li class="infoItem">
+          <span class="infoSpan"
+            ><i class="bi bi-instagram"></i
+            ><a href="#" class="infoSocials">Instagram</a></span
+          >
+        </li>
       </ul>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 contactForm">
       <h2>Contact Form</h2>
       <form>
         <div class="form-group">
@@ -59,4 +74,73 @@
       </form>
     </div>
   </div>
+</div>
+
+<div class="footerContainer">
+  <footer class="py-5">
+    <div class="row footerRow">
+      <div class="col-6 col-md-2 mb-3">
+        <h5>Menu</h5>
+        <ul class="nav flex-column">
+          <li class="nav-item mb-2">
+            <a href="#" class="nav-link p-0 text-body-secondary">Home</a>
+          </li>
+          <li class="nav-item mb-2">
+            <a href="#" class="nav-link p-0 text-body-secondary">About Us</a>
+          </li>
+          <li class="nav-item mb-2">
+            <a href="#" class="nav-link p-0 text-body-secondary">Contact Us</a>
+          </li>
+          <li class="nav-item mb-2">
+            <a href="#" class="nav-link p-0 text-body-secondary">FAQs</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-md-5 offset-md-1 mb-3">
+        <form>
+          <h5>Subscribe to our newsletter</h5>
+          <p>Monthly digest of what's new and exciting from us.</p>
+          <div class="d-flex flex-column flex-sm-row w-100 gap-2">
+            <label for="newsletter1" class="visually-hidden"
+              >Email address</label
+            >
+            <input
+              id="newsletter1"
+              type="text"
+              class="form-control"
+              placeholder="Email address"
+            />
+            <button class="btn btn-primary" type="button">Subscribe</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div
+      class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top"
+    >
+      <p>© 2025 NutriLife, Inc. All rights reserved.</p>
+      <ul class="list-unstyled d-flex">
+        <li class="ms-3">
+          <a class="link-body-emphasis" href="#"
+            ><svg class="bi" width="24" height="24">
+              <use xlink:href="#twitter"></use></svg
+          ></a>
+        </li>
+        <li class="ms-3">
+          <a class="link-body-emphasis" href="#"
+            ><svg class="bi" width="24" height="24">
+              <use xlink:href="#instagram"></use></svg
+          ></a>
+        </li>
+        <li class="ms-3">
+          <a class="link-body-emphasis" href="#"
+            ><svg class="bi" width="24" height="24">
+              <use xlink:href="#facebook"></use></svg
+          ></a>
+        </li>
+      </ul>
+    </div>
+  </footer>
 </div>

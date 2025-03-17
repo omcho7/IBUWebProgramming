@@ -1,15 +1,22 @@
+const pageCache = {};
+
 function navigate(page) {
-  fetch(`pages/${page}.html`)
-    .then((response) => response.text())
-    .then((data) => {
-      document.getElementById("content").innerHTML = data;
-      history.pushState({ page }, "", "#" + page);
-    })
-    .catch(
-      () =>
-        (document.getElementById("content").innerHTML =
-          "<h2>Page Not Found</h2>")
-    );
+  if (pageCache[page]) {
+    document.getElementById("content").innerHTML = pageCache[page];
+    history.pushState({ page }, "", "#" + page);
+  } else {
+    fetch(`pages/${page}.html`)
+      .then((response) => response.text())
+      .then((data) => {
+        pageCache[page] = data;
+        document.getElementById("content").innerHTML = data;
+        history.pushState({ page }, "", "#" + page);
+      })
+      .catch(() => {
+        document.getElementById("content").innerHTML =
+          "<h2>Page Not Found</h2>";
+      });
+  }
 }
 
 window.addEventListener("popstate", (event) => {

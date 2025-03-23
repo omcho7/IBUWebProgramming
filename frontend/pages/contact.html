@@ -1,3 +1,52 @@
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div
+    class="container-fluid d-flex justify-content-between align-items-center"
+  >
+    <span class="d-flex align-items-center"
+      ><img
+        src="/frontend/assets/images/logo.svg"
+        alt="NutriLife logo"
+        style="margin-right: 8px"
+      /><a class="navbar-brand" href="#">NutriLife</a>
+    </span>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a onclick="navigate('home')">Home</a>
+        </li>
+        <li class="nav-item">
+          <a onclick="navigate('about')">About Us</a>
+        </li>
+        <li class="nav-item">
+          <a onclick="navigate('contact')">Contact Us</a>
+        </li>
+      </ul>
+      <div class="d-flex">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" onclick="navigate('login')">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" onclick="navigate('signup')">Sign Up</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
 <div class="container mt-5">
   <div class="row contactSection">
     <div class="col-md-6 contactInfo">
@@ -83,16 +132,28 @@
         <h5>Menu</h5>
         <ul class="nav flex-column">
           <li class="nav-item mb-2">
-            <a href="#" class="nav-link p-0 text-body-secondary">Home</a>
+            <a
+              onclick="navigate('home')"
+              href="#"
+              class="nav-link p-0 text-body-secondary"
+              >Home</a
+            >
           </li>
           <li class="nav-item mb-2">
-            <a href="#" class="nav-link p-0 text-body-secondary">About Us</a>
+            <a
+              onclick="navigate('about')"
+              href="#"
+              class="nav-link p-0 text-body-secondary"
+              >About Us</a
+            >
           </li>
           <li class="nav-item mb-2">
-            <a href="#" class="nav-link p-0 text-body-secondary">Contact Us</a>
-          </li>
-          <li class="nav-item mb-2">
-            <a href="#" class="nav-link p-0 text-body-secondary">FAQs</a>
+            <a
+              onclick="navigate('contact')"
+              href="#"
+              class="nav-link p-0 text-body-secondary"
+              >Contact Us</a
+            >
           </li>
         </ul>
       </div>

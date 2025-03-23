@@ -1,4 +1,70 @@
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div
+    class="container-fluid d-flex justify-content-between align-items-center"
+  >
+    <span class="d-flex align-items-center"
+      ><img
+        src="/frontend/assets/images/logo.svg"
+        alt="NutriLife logo"
+        style="margin-right: 8px"
+      /><a class="navbar-brand" >NutriLife</a>
+    </span>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav mb-2 mb-lg-0">
+      <li class="nav-item">
+        <span class="container-fluid d-flex justify-content-between align-items-center"><i class="profilePic bi bi-person-circle"></i><!-- Button trigger modal -->
+          <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Logout
+          </button>
+          
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Attention!</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to log out and return to home screen?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Return</button>
+                  <button type="button" class="btn btn-danger" data-bs-dismiss="modal"><a onclick="navigate('home')">Yes, Logout</a></button>
+                </div>
+              </div>
+            </div>
+          </div></span>
+      </li>
+      </ul>
+    </div>
+
+  
+</nav>
+
+
+
 <div class="container mt-5">
+  <video
+  class="clientHeroVid"
+    autoplay
+    muted
+    loop
+    src="https://videos.pexels.com/video-files/5857697/5857697-uhd_2560_1440_25fps.mp4"
+  ></video>
+  <div class="clientHero">
   <div class="row">
     <div class="col-md-12 text-center">
       <h2>Welcome, [Client Name]!</h2>
@@ -10,7 +76,7 @@
   </div>
   <div class="row mt-5">
     <div class="col-md-4">
-      <div class="card text-center">
+      <div class="clientCards card text-center">
         <div class="card-body">
           <h5 class="card-title">📅 Appointments</h5>
           <p class="card-text">You have 2 upcoming appointments.</p>
@@ -18,7 +84,7 @@
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card text-center">
+      <div class="clientCards card text-center">
         <div class="card-body">
           <h5 class="card-title">🥗 Meal Plans</h5>
           <p class="card-text">Your current meal plan:</p>
@@ -26,7 +92,7 @@
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card text-center">
+      <div class="clientCards card text-center">
         <div class="card-body">
           <h5 class="card-title">🎯 Health Goals</h5>
           <p class="card-text">You have achieved 3 out of 5 health goals.</p>
@@ -34,6 +100,7 @@
       </div>
     </div>
   </div>
+</div>
   <div class="row mt-5" style="display: flex; justify-content: center">
     <div class="col-md-6">
       <ul
@@ -43,7 +110,7 @@
         style="display: flex; justify-content: center"
       >
         <li class="nav-item" role="presentation">
-          <button
+            <button
             class="nav-link active"
             id="home-tab"
             data-bs-toggle="tab"
@@ -52,6 +119,9 @@
             role="tab"
             aria-controls="home-tab-pane"
             aria-selected="true"
+            style="color: rgb(30, 154, 92);"
+            onfocus="this.style.color='rgb(30, 154, 92)';"
+            onblur="this.style.color='gray';"
           >
             Appointments
           </button>
@@ -66,12 +136,15 @@
             role="tab"
             aria-controls="profile-tab-pane"
             aria-selected="false"
+            style="color: gray;"
+            onfocus="this.style.color='rgb(30, 154, 92)';" 
+            onblur="this.style.color='gray';"
           >
             Meal Plans
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button
+            <button
             class="nav-link"
             id="contact-tab"
             data-bs-toggle="tab"
@@ -80,6 +153,9 @@
             role="tab"
             aria-controls="contact-tab-pane"
             aria-selected="false"
+           style="color: gray;"
+            onfocus="this.style.color='rgb(30, 154, 92)';" 
+            onblur="this.style.color='gray';"
           >
             Health Goals
           </button>
@@ -145,7 +221,7 @@
             <div class="d-flex justify-content-between">
               <button
                 type="button"
-                class="btn btn-info"
+                class="btn btn-outline-success"
                 data-bs-toggle="modal"
                 data-bs-target="#mealPlanModal"
               >
@@ -171,7 +247,7 @@
             <div class="d-flex justify-content-between">
               <button
                 type="button"
-                class="btn btn-info"
+                class="btn btn-outline-success"
                 data-bs-toggle="modal"
                 data-bs-target="#mealPlanModal"
               >
@@ -242,7 +318,7 @@
       aria-labelledby="contact-tab"
       tabindex="0"
     >
-      <h2 class="mb-4">Your Health Goals</h2>
+      <h2 class="mb-4" style="text-align: center; margin-top: 40px;">Your Health Goals</h2>
 
       <div id="health-goals" class="row">
         <div class="col-md-4 mb-3">
@@ -325,4 +401,22 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="footerContainer">
+  <footer class="py-5 ">
+    <div class="row footerRow">
+      
+
+      
+    </div>
+
+    <div
+      class=" py-4 my-2 border-top"
+      style="text-align: center;"
+    >
+      <p>© 2025 NutriLife, Inc. All rights reserved.</p>
+      
+    </div>
+  </footer>
 </div>

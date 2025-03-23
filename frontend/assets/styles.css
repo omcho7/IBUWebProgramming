@@ -1,5 +1,6 @@
 body {
   font-family: Poppins, sans-serif;
+  background-color: #fffafa;
 }
 nav {
   margin-bottom: 20px;
@@ -9,6 +10,17 @@ nav a {
   cursor: pointer;
   color: rgb(30, 154, 92);
   text-decoration: underline;
+}
+
+.navbar {
+  background-color: white;
+  padding: 15px;
+}
+
+.navbar-brand {
+  font-family: "Lexend Deca", sans-serif;
+  font-size: 1.6rem;
+  font-weight: 500;
 }
 
 .btn-primary:hover {
@@ -25,15 +37,6 @@ nav a {
   font-size: large;
   border: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-#navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 1;
 }
 
 #content {
@@ -110,6 +113,9 @@ nav a {
   margin-top: 7rem;
   margin-bottom: 7rem;
   transition: transform 0.3s ease-in-out;
+  border-radius: 20px;
+  border: 0px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 #iconCardsImg {
@@ -153,6 +159,8 @@ nav a {
 
 .customerCard {
   border-radius: 20px;
+  border: 0px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .customerImg {
@@ -266,6 +274,13 @@ nav a {
 }
 .valueImg {
   width: 100px;
+  margin: 40px;
+}
+
+.valueCard {
+  border-radius: 20px;
+  border: 0px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .loginForm {
@@ -277,4 +292,59 @@ nav a {
 .loginGroup,
 .loginBtn {
   margin: 15px;
+}
+
+.goalsForm,
+.allergiesForm {
+  display: grid;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.goalsForm > *,
+.allergiesForm > * {
+  margin-top: 10px;
+}
+
+.progress {
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  background-color: rgb(30, 154, 92);
+}
+
+.stepText {
+  transform: translateX(-40px);
+}
+
+.backArrow {
+  color: rgb(30, 154, 92);
+  background-color: transparent;
+  text-decoration: none;
+  border: none;
+  margin: 20px;
+  padding: 10px 20px;
+  transform: translateX(-40px);
+}
+
+.backArrow:hover {
+  background-color: rgb(30, 154, 92);
+  color: white;
+  border-radius: 10px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.appot {
+  width: 80%;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.mealPlan {
+  width: 80%;
+  padding: 40px;
 }

@@ -21,12 +21,19 @@
             placeholder="Enter your password"
           />
         </div>
-        <button type="submit" class="btn btn-primary btn-block loginBtn">
+        <button
+          onclick="navigate('/client/Cdashboard')"
+          type="submit"
+          class="btn btn-primary btn-block loginBtn"
+        >
           Login
         </button>
       </form>
       <div class="text-center mt-3">
-        <p>Don't have an account? <a href="#">Sign up</a></p>
+        <p>
+          Don't have an account?
+          <a href="#" onclick="navigate('/signup')">Sign up</a>
+        </p>
         <p><a href="#">Forgot your password?</a></p>
       </div>
     </div>

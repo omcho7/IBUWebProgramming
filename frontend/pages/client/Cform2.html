@@ -1,0 +1,114 @@
+<div class="container">
+  <div class="row mt-5 justify-content-center">
+    <div class="col-md-5">
+      <div class="d-flex align-items-center justify-content-center">
+        <button
+          onclick="navigate('/client/Cform')"
+          type="button"
+          class="backArrow"
+        >
+          <i class="bi bi-arrow-left"></i>
+        </button>
+
+        <h5 class="stepText text-center" style="color: rgb(30, 154, 92)">
+          Step 2/2
+        </h5>
+      </div>
+
+      <div class="progress mb-4">
+        <div
+          class="progress-bar"
+          role="progressbar"
+          style="width: 100%"
+          aria-valuenow="100"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        ></div>
+      </div>
+      <h2 class="text-center">Do you have any allergies?</h2>
+      <h4 class="text-center">(Select all that apply)</h4>
+      <form class="allergiesForm">
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="allergy1"
+            value="Peanuts"
+          />
+          <label class="form-check-label" for="allergy1">🥜 Peanuts</label>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="allergy2"
+            value="Dairy"
+          />
+          <label class="form-check-label" for="allergy2">🥛 Dairy</label>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="allergy3"
+            value="Gluten"
+          />
+          <label class="form-check-label" for="allergy3">🍞 Gluten</label>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="allergy4"
+            value="Seafood"
+          />
+          <label class="form-check-label" for="allergy4">🦐 Seafood</label>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="allergy5"
+            value="Soy"
+          />
+          <label class="form-check-label" for="allergy5">🌱 Soy</label>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="allergy6"
+            value="Eggs"
+          />
+          <label class="form-check-label" for="allergy6">🥚 Eggs</label>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="allergy7"
+            value="Tree Nuts"
+          />
+          <label class="form-check-label" for="allergy7">🌰 Tree Nuts</label>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="allergy8"
+            value="Other"
+          />
+          <label class="form-check-label" for="allergy8">❓ Other</label>
+        </div>
+        <button
+          onclick="navigate('/client/Cdashboard')"
+          type="submit"
+          class="btn btn-primary btn-block loginBtn"
+          style="margin-top: 40px"
+        >
+          Finish
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,69 +1,331 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Client Dashboard - NutriLife</title>
-    <link
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div class="container mt-5">
-      <div class="row">
-        <div class="col-md-12 text-center">
-          <h2>Welcome, [Client Name]!</h2>
-          <p>
-            Your health journey starts here. Check your stats and manage your
-            profile.
-          </p>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-12 text-center">
+      <h2>Welcome, [Client Name]!</h2>
+      <p>
+        Your health journey starts here. Check your stats and manage your
+        profile.
+      </p>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">📅 Appointments</h5>
+          <p class="card-text">You have 2 upcoming appointments.</p>
         </div>
       </div>
-      <div class="row mt-5">
-        <div class="col-md-4">
-          <div class="card text-center">
-            <div class="card-body">
-              <h5 class="card-title">Upcoming Appointments</h5>
-              <p class="card-text">You have 2 upcoming appointments.</p>
-              <a href="#" class="btn btn-primary">View Appointments</a>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">🥗 Meal Plans</h5>
+          <p class="card-text">Your current meal plan:</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">🎯 Health Goals</h5>
+          <p class="card-text">You have achieved 3 out of 5 health goals.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-5" style="display: flex; justify-content: center">
+    <div class="col-md-6">
+      <ul
+        class="nav nav-tabs"
+        id="myTab"
+        role="tablist"
+        style="display: flex; justify-content: center"
+      >
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="home-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#home-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="home-tab-pane"
+            aria-selected="true"
+          >
+            Appointments
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="profile-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#profile-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="profile-tab-pane"
+            aria-selected="false"
+          >
+            Meal Plans
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="contact-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#contact-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="contact-tab-pane"
+            aria-selected="false"
+          >
+            Health Goals
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tab-content" id="myTabContent">
+    <div
+      class="tab-pane fade show active"
+      id="home-tab-pane"
+      role="tabpanel"
+      aria-labelledby="home-tab"
+      tabindex="0"
+    >
+      <div class="appot container">
+        <h2 class="mb-4">Manage Appointments</h2>
+
+        <!-- Form for adding/editing appointments -->
+        <div id="content">
+          <form id="appointment-form" class="mb-3">
+            <div class="mb-2">
+              <input
+                type="text"
+                id="appointment-title"
+                class="form-control"
+                placeholder="Appointment Title"
+                required
+              />
+            </div>
+            <div class="mb-2">
+              <input
+                type="datetime-local"
+                id="appointment-date"
+                class="form-control"
+                required
+              />
+            </div>
+            <button type="submit" class="btn btn-primary">
+              Add Appointment
+            </button>
+          </form>
+
+          <!-- Appointment list -->
+          <ul id="appointments-list" class="list-group"></ul>
+        </div>
+      </div>
+    </div>
+    <div
+      class="tab-pane fade"
+      id="profile-tab-pane"
+      role="tabpanel"
+      aria-labelledby="profile-tab"
+      tabindex="0"
+    >
+      <div class="mealPlan container">
+        <h2 class="mb-4" style="text-align: center">Available Meal Plans</h2>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">🥗 Balanced Diet Plan</h5>
+            <p class="card-text">
+              A well-rounded meal plan for a healthy lifestyle.
+            </p>
+            <div class="d-flex justify-content-between">
+              <button
+                type="button"
+                class="btn btn-info"
+                data-bs-toggle="modal"
+                data-bs-target="#mealPlanModal"
+              >
+                View Details
+              </button>
+              <button
+                type="button"
+                class="btn btn-success choose-meal-plan"
+                data-meal-plan="Balanced Diet Plan"
+              >
+                Choose
+              </button>
             </div>
           </div>
         </div>
-        <div class="col-md-4">
-          <div class="card text-center">
-            <div class="card-body">
-              <h5 class="card-title">Meal Plans</h5>
-              <p class="card-text">Your current meal plan is active.</p>
-              <a href="#" class="btn btn-primary">View Meal Plans</a>
+
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">🥗 High Protein Plan</h5>
+            <p class="card-text">
+              A meal plan focused on high protein intake for muscle building.
+            </p>
+            <div class="d-flex justify-content-between">
+              <button
+                type="button"
+                class="btn btn-info"
+                data-bs-toggle="modal"
+                data-bs-target="#mealPlanModal"
+              >
+                View Details
+              </button>
+              <button
+                type="button"
+                class="btn btn-success choose-meal-plan"
+                data-meal-plan="High Protein Plan"
+              >
+                Choose
+              </button>
             </div>
           </div>
         </div>
-        <div class="col-md-4">
-          <div class="card text-center">
-            <div class="card-body">
-              <h5 class="card-title">Health Goals</h5>
-              <p class="card-text">
-                You have achieved 3 out of 5 health goals.
+      </div>
+
+      <!-- Modal for meal plan details -->
+      <div
+        class="modal fade"
+        id="mealPlanModal"
+        tabindex="-1"
+        aria-labelledby="mealPlanModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="mealPlanModalLabel">
+                Balanced Diet Plan
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <p>
+                This meal plan includes a variety of fruits, vegetables, lean
+                proteins, and whole grains to ensure a balanced diet. Perfect
+                for maintaining energy and overall health.
               </p>
-              <a href="#" class="btn btn-primary">View Health Profile</a>
+              <ul>
+                <li>Breakfast: Oatmeal with fresh berries</li>
+                <li>Lunch: Grilled chicken salad</li>
+                <li>Dinner: Baked salmon with quinoa and steamed broccoli</li>
+                <li>Snacks: Mixed nuts and yogurt</li>
+              </ul>
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="row mt-5">
-        <div class="col-md-12 text-center">
-          <h3>Navigation</h3>
-          <div class="btn-group" role="group" aria-label="Navigation">
-            <a href="#" class="btn btn-secondary">Appointments</a>
-            <a href="#" class="btn btn-secondary">Meal Plans</a>
-            <a href="#" class="btn btn-secondary">Health Profile</a>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  </body>
-</html>
+    <div
+      class="tab-pane fade"
+      id="contact-tab-pane"
+      role="tabpanel"
+      aria-labelledby="contact-tab"
+      tabindex="0"
+    >
+      <h2 class="mb-4">Your Health Goals</h2>
+
+      <div id="health-goals" class="row">
+        <div class="col-md-4 mb-3">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Weight Loss</h5>
+              <p class="card-text">
+                <strong>Target:</strong> 70 kg<br />
+                <strong>Current:</strong> 75 kg<br />
+                <strong>Deadline:</strong> 31 Dec 2025
+              </p>
+              <div class="progress mb-2">
+                <div
+                  class="progress-bar"
+                  role="progressbar"
+                  style="width: 50%"
+                  aria-valuenow="50"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                >
+                  50%
+                </div>
+              </div>
+              <button class="btn btn-primary btn-sm w-100">Update Goal</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Muscle Gain</h5>
+              <p class="card-text">
+                <strong>Target:</strong> 60 kg<br />
+                <strong>Current:</strong> 55 kg<br />
+                <strong>Deadline:</strong> 30 Jun 2025
+              </p>
+              <div class="progress mb-2">
+                <div
+                  class="progress-bar"
+                  role="progressbar"
+                  style="width: 75%"
+                  aria-valuenow="75"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                >
+                  75%
+                </div>
+              </div>
+              <button class="btn btn-primary btn-sm w-100">Update Goal</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Running Distance</h5>
+              <p class="card-text">
+                <strong>Target:</strong> 5 km<br />
+                <strong>Current:</strong> 3 km<br />
+                <strong>Deadline:</strong> 15 Mar 2025
+              </p>
+              <div class="progress mb-2">
+                <div
+                  class="progress-bar"
+                  role="progressbar"
+                  style="width: 60%"
+                  aria-valuenow="60"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                >
+                  60%
+                </div>
+              </div>
+              <button class="btn btn-primary btn-sm w-100">Update Goal</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

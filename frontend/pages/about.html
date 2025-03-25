@@ -1,15 +1,64 @@
-<div class="container mt-5">
-  <div class="row">
-    <div class="col-md-12 text-center">
-      <h2>About Us</h2>
-      <p>Learn more about us here.</p>
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div
+    class="container-fluid d-flex justify-content-between align-items-center"
+  >
+    <span class="d-flex align-items-center"
+      ><img
+        src="/frontend/assets/images/logo.svg"
+        alt="NutriLife logo"
+        style="margin-right: 8px"
+      /><a class="navbar-brand" href="#">NutriLife</a>
+    </span>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a onclick="navigate('home')">Home</a>
+        </li>
+        <li class="nav-item">
+          <a onclick="navigate('about')">About Us</a>
+        </li>
+        <li class="nav-item">
+          <a onclick="navigate('contact')">Contact Us</a>
+        </li>
+      </ul>
+      <div class="d-flex">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" onclick="navigate('login')">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" onclick="navigate('signup')">Sign Up</a>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
-  <div class="row mt-5">
-    <div class="col-md-6">
-      <img src="path/to/about-image.jpg" class="img-fluid" alt="About Us" />
-    </div>
-    <div class="col-md-6">
+</nav>
+
+<div class="container mt-5">
+  <div class="video-container">
+    <video
+      class="video-item"
+      src="/frontend/assets/videos/aboutVideo.mp4"
+      muted
+      autoplay
+      loop
+    ></video>
+  </div>
+  <div class="row mt-5 aboutUsSection">
+    <div class="col-md-6 aboutContent">
       <h3>Our Mission</h3>
       <p>
         At NutriLife, our mission is to provide personalized nutrition advice to
@@ -24,59 +73,125 @@
         dedicated to supporting you every step of the way on your health
         journey.
       </p>
+      <p>
+        Whether you're looking to manage weight, boost energy, or address
+        specific health concerns, we tailor our guidance to fit your unique
+        needs and preferences. At NutriLife, we’re not just about short-term
+        fixes—we’re here to empower you with the tools and knowledge to thrive
+        for life.
+      </p>
     </div>
   </div>
-  <div class="row mt-5">
+  <div class="row mt-5 meetOurTeamSection">
     <div class="col-md-12 text-center">
-      <h3>Meet Our Team</h3>
+      <h3 style="margin-bottom: 3rem">Meet Our Team</h3>
     </div>
     <div class="col-md-4 text-center">
-      <div class="card">
+      <div class="card team">
         <img
-          src="path/to/team-member1.jpg"
-          class="card-img-top"
+          src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          class="card-img-top teamImg"
           alt="Team Member 1"
         />
         <div class="card-body">
-          <h5 class="card-title">John Doe</h5>
+          <h5 class="card-title">Jessica Doe</h5>
           <p class="card-text">Certified Nutritionist</p>
+          <p class="teamDesc">
+            Jessica specializes in creating personalized, science-based
+            nutrition plans to help clients achieve sustainable health goals.
+            Her holistic approach focuses on empowering individuals to make
+            informed choices for wellness.
+          </p>
+          <span
+            ><img
+              class="teamSocials"
+              src="/frontend/assets/images/email.svg"
+              alt="email"
+          /></span>
+          <span
+            ><img
+              class="teamSocials"
+              src="/frontend/assets/images/linkedin.svg"
+              alt="linkedin"
+          /></span>
         </div>
       </div>
     </div>
     <div class="col-md-4 text-center">
-      <div class="card">
+      <div class="card team">
         <img
-          src="path/to/team-member2.jpg"
-          class="card-img-top"
+          src="https://plus.unsplash.com/premium_photo-1661690765823-168ad97adf14?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          class="card-img-top teamImg"
           alt="Team Member 2"
         />
         <div class="card-body">
           <h5 class="card-title">Jane Smith</h5>
           <p class="card-text">Registered Dietitian</p>
+          <p class="teamDesc">
+            Jane uses evidence-based practices to help clients manage chronic
+            conditions and optimize overall health. With a master’s in nutrition
+            science, she provides tailored guidance to support lasting lifestyle
+            changes.
+          </p>
+          <span
+            ><img
+              class="teamSocials"
+              src="/frontend/assets/images/email.svg"
+              alt="email"
+          /></span>
+          <span
+            ><img
+              class="teamSocials"
+              src="/frontend/assets/images/linkedin.svg"
+              alt="linkedin"
+          /></span>
         </div>
       </div>
     </div>
     <div class="col-md-4 text-center">
-      <div class="card">
+      <div class="card team">
         <img
-          src="path/to/team-member3.jpg"
-          class="card-img-top"
+          src="https://plus.unsplash.com/premium_photo-1658506671316-0b293df7c72b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          class="card-img-top teamImg"
           alt="Team Member 3"
         />
         <div class="card-body">
-          <h5 class="card-title">Emily Johnson</h5>
+          <h5 class="card-title">Robert Johnson</h5>
           <p class="card-text">Health Coach</p>
+          <p class="teamDesc">
+            Robert combines fitness and nutrition expertise to help clients
+            build healthier habits and achieve their wellness goals. His
+            motivating and results-driven approach makes him a trusted partner
+            for lifestyle transformation.
+          </p>
+          <span
+            ><img
+              class="teamSocials"
+              src="/frontend/assets/images/email.svg"
+              alt="email"
+          /></span>
+          <span
+            ><img
+              class="teamSocials"
+              src="/frontend/assets/images/linkedin.svg"
+              alt="linkedin"
+          /></span>
         </div>
       </div>
     </div>
   </div>
   <div class="row mt-5">
     <div class="col-md-12 text-center">
-      <h3>Our Values</h3>
+      <h3 style="margin-bottom: 3rem">Our Values</h3>
     </div>
     <div class="col-md-4 text-center">
-      <div class="card">
+      <div class="card valueCard">
         <div class="card-body">
+          <img
+            class="valueImg"
+            src="/frontend/assets/images/clipb.svg"
+            alt="integrity"
+          />
           <h5 class="card-title">Integrity</h5>
           <p class="card-text">
             We are committed to providing honest and transparent advice to help
@@ -86,8 +201,13 @@
       </div>
     </div>
     <div class="col-md-4 text-center">
-      <div class="card">
+      <div class="card valueCard">
         <div class="card-body">
+          <img
+            class="valueImg"
+            src="/frontend/assets/images/badge.svg"
+            alt="integrity"
+          />
           <h5 class="card-title">Excellence</h5>
           <p class="card-text">
             We strive for excellence in everything we do, from our personalized
@@ -97,8 +217,13 @@
       </div>
     </div>
     <div class="col-md-4 text-center">
-      <div class="card">
+      <div class="card valueCard">
         <div class="card-body">
+          <img
+            class="valueImg"
+            src="/frontend/assets/images/globe.svg"
+            alt="integrity"
+          />
           <h5 class="card-title">Support</h5>
           <p class="card-text">
             We are dedicated to providing continuous support and guidance to
@@ -108,4 +233,85 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="footerContainer">
+  <footer class="py-5">
+    <div class="row footerRow">
+      <div class="col-6 col-md-2 mb-3">
+        <h5>Menu</h5>
+        <ul class="nav flex-column">
+          <li class="nav-item mb-2">
+            <a
+              onclick="navigate('home')"
+              href="#"
+              class="nav-link p-0 text-body-secondary"
+              >Home</a
+            >
+          </li>
+          <li class="nav-item mb-2">
+            <a
+              onclick="navigate('about')"
+              href="#"
+              class="nav-link p-0 text-body-secondary"
+              >About Us</a
+            >
+          </li>
+          <li class="nav-item mb-2">
+            <a
+              onclick="navigate('contact')"
+              href="#"
+              class="nav-link p-0 text-body-secondary"
+              >Contact Us</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-md-5 offset-md-1 mb-3">
+        <form>
+          <h5>Subscribe to our newsletter</h5>
+          <p>Monthly digest of what's new and exciting from us.</p>
+          <div class="d-flex flex-column flex-sm-row w-100 gap-2">
+            <label for="newsletter1" class="visually-hidden"
+              >Email address</label
+            >
+            <input
+              id="newsletter1"
+              type="text"
+              class="form-control"
+              placeholder="Email address"
+            />
+            <button class="btn btn-primary" type="button">Subscribe</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div
+      class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top"
+    >
+      <p>© 2025 NutriLife, Inc. All rights reserved.</p>
+      <ul class="list-unstyled d-flex">
+        <li class="ms-3">
+          <a class="link-body-emphasis" href="#"
+            ><svg class="bi" width="24" height="24">
+              <use xlink:href="#twitter"></use></svg
+          ></a>
+        </li>
+        <li class="ms-3">
+          <a class="link-body-emphasis" href="#"
+            ><svg class="bi" width="24" height="24">
+              <use xlink:href="#instagram"></use></svg
+          ></a>
+        </li>
+        <li class="ms-3">
+          <a class="link-body-emphasis" href="#"
+            ><svg class="bi" width="24" height="24">
+              <use xlink:href="#facebook"></use></svg
+          ></a>
+        </li>
+      </ul>
+    </div>
+  </footer>
 </div>

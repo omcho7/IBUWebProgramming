@@ -1,18 +1,85 @@
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div
+    class="container-fluid d-flex justify-content-between align-items-center"
+  >
+    <span class="d-flex align-items-center"
+      ><img
+        src="/frontend/assets/images/logo.svg"
+        alt="NutriLife logo"
+        style="margin-right: 8px"
+      /><a class="navbar-brand" href="#">NutriLife</a>
+    </span>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a onclick="navigate('home')">Home</a>
+        </li>
+        <li class="nav-item">
+          <a onclick="navigate('about')">About Us</a>
+        </li>
+        <li class="nav-item">
+          <a onclick="navigate('contact')">Contact Us</a>
+        </li>
+      </ul>
+      <div class="d-flex">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" onclick="navigate('login')">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" onclick="navigate('signup')">Sign Up</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
 <div class="container">
-  <div class="row mt-5">
-    <div class="col-md-12 text-center">
-      <h1>Welcome to Our Nutrition Consultation</h1>
+  <video
+    autoplay
+    muted
+    loop
+    id="heroVideo"
+    src="https://videos.pexels.com/video-files/5857694/5857694-uhd_2560_1440_25fps.mp4"
+  ></video>
+  <div class="row mt-5 hero-section">
+    <div class="col-md-12 text-center heroContent">
+      <h1>Welcome to NutriLife</h1>
       <p>
-        Your health is our priority. Get personalized nutrition advice from our
-        experts.
+        Your health is our priority. Get personalized nutrition advice and
+        consultations from our experts.
       </p>
-      <button type="button" class="btn btn-primary">Book an appointment</button>
+      <button
+        onclick="navigate('/login')"
+        type="button"
+        class="btn btn-primary"
+      >
+        Book an appointment
+      </button>
     </div>
   </div>
   <div class="row mt-5">
     <div class="col-md-4">
-      <div class="card">
-        <img src="path/to/image1.jpg" class="card-img-top" alt="Consultation" />
+      <div class="card iconCards">
+        <img
+          src="/frontend/assets/images/chat.svg"
+          class="card-img-top"
+          alt="Consultation"
+          id="iconCardsImg"
+        />
         <div class="card-body">
           <h5 class="card-title">Personalized Consultation</h5>
           <p class="card-text">
@@ -23,8 +90,13 @@
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card">
-        <img src="path/to/image2.jpg" class="card-img-top" alt="Plans" />
+      <div class="card iconCards">
+        <img
+          src="/frontend/assets/images/bowl.svg"
+          class="card-img-top"
+          alt="Plans"
+          id="iconCardsImg"
+        />
         <div class="card-body">
           <h5 class="card-title">Custom Meal Plans</h5>
           <p class="card-text">
@@ -35,8 +107,13 @@
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card">
-        <img src="path/to/image3.jpg" class="card-img-top" alt="Support" />
+      <div class="card iconCards">
+        <img
+          src="/frontend/assets/images/support.svg"
+          class="card-img-top"
+          alt="Support"
+          id="iconCardsImg"
+        />
         <div class="card-body">
           <h5 class="card-title">Ongoing Support</h5>
           <p class="card-text">
@@ -47,116 +124,139 @@
       </div>
     </div>
   </div>
-  <div class="row mt-5">
-    <div class="col-md-6">
-      <img
-        src="path/to/your-image.jpg"
-        class="img-fluid"
-        alt="Nutrition Approach"
-      />
-    </div>
-    <div class="col-md-6">
-      <h2>About our approach</h2>
-      <p>
-        At NutriLife, we believe that nutrition is the foundation of good
-        health. Our team of certified nutritionists combines scientific
-        knowledge with a personalized approach to help you achieve lasting
-        results.
-      </p>
+  <div class="aboutSection">
+    <div class="row mt-5">
+      <div class="col-md-6">
+        <video
+          autoplay
+          muted
+          loop
+          id="aboutVideo"
+          src="https://videos.pexels.com/video-files/8844494/8844494-uhd_2732_1440_24fps.mp4"
+        ></video>
+      </div>
+      <div class="col-md-6">
+        <h2>About our approach</h2>
+        <p>
+          At NutriLife, we believe that nutrition is the foundation of good
+          health. Our team of certified nutritionists combines scientific
+          knowledge with a personalized approach to help you achieve lasting
+          results.
+        </p>
 
-      <p>
-        We don't believe in fad diets or quick fixes. Instead, we focus on
-        sustainable lifestyle changes that nourish your body and mind for
-        long-term health and wellness.
-      </p>
-      <div class="row">
-        <div class="col-md-6">
-          <div class="d-flex align-items-center mb-3">
-            <i class="bi bi-check-circle-fill text-success me-2"></i>
-            <span>Experienced Nutritionists</span>
+        <p>
+          We don't believe in fad diets or quick fixes. Instead, we focus on
+          sustainable lifestyle changes that nourish your body and mind for
+          long-term health and wellness.
+        </p>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="d-flex align-items-center mb-3 emojiFeat">
+              <!--<i class="bi bi-check-circle-fill text-success me-2"></i>-->
+              <span
+                ><img
+                  class="check"
+                  src="/frontend/assets/images/check.svg"
+                  alt="check"
+              /></span>
+              <span>Experienced Nutritionists</span>
+            </div>
           </div>
-        </div>
-        <div class="col-md-6">
-          <div class="d-flex align-items-center mb-3">
-            <i class="bi bi-check-circle-fill text-success me-2"></i>
-            <span>Personalized Approach</span>
+          <div class="col-md-6">
+            <div class="d-flex align-items-center mb-3 emojiFeat">
+              <span
+                ><img
+                  class="check"
+                  src="/frontend/assets/images/check.svg"
+                  alt="check"
+              /></span>
+              <span>Personalized Approach</span>
+            </div>
           </div>
-        </div>
-        <div class="col-md-6">
-          <div class="d-flex align-items-center mb-3">
-            <i class="bi bi-check-circle-fill text-success me-2"></i>
-            <span>Proven Results</span>
+          <div class="col-md-6">
+            <div class="d-flex align-items-center mb-3 emojiFeat">
+              <span
+                ><img
+                  class="check"
+                  src="/frontend/assets/images/check.svg"
+                  alt="check"
+              /></span>
+              <span>Tested Effectiveness</span>
+            </div>
           </div>
-        </div>
-        <div class="col-md-6">
-          <div class="d-flex align-items-center mb-3">
-            <i class="bi bi-check-circle-fill text-success me-2"></i>
-            <span>Comprehensive Support</span>
+          <div class="col-md-6">
+            <div class="d-flex align-items-center mb-3 emojiFeat">
+              <span
+                ><img
+                  class="check"
+                  src="/frontend/assets/images/check.svg"
+                  alt="check"
+              /></span>
+              <span>Comprehensive Support</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-md-12 text-center">
-      <h2>What our customers say</h2>
-      <p>
-        Hear from our satisfied customers who have transformed their health with
-        NutriLife.
-      </p>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-12">
+      <div class="col-md-12 text-center">
+        <h2>What our customers say</h2>
+        <p>
+          Hear from our satisfied customers who have transformed their health
+          with NutriLife.
+        </p>
 
-      <div class="row mt-5">
-        <div class="col-md-4">
-          <div class="card">
-            <img
-              src="path/to/customer1.jpg"
-              class="card-img-top"
-              alt="Customer 1"
-            />
-            <div class="card-body">
-              <p class="card-text">
-                "NutriLife has completely changed my life. I feel healthier and
-                more energetic than ever!"
-              </p>
-              <h5 class="card-title">John Doe</h5>
-              <div class="text-warning">
-                &#9733;&#9733;&#9733;&#9733;&#9733;
+        <div class="row mt-5">
+          <div class="col-md-4">
+            <div class="card customerCard">
+              <img
+                src="https://plus.unsplash.com/premium_photo-1689539137236-b68e436248de?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                class="card-img-top customerImg"
+                alt="Customer 1"
+              />
+              <div class="card-body">
+                <p class="card-text">
+                  "NutriLife has completely changed my life. I feel healthier
+                  and more energetic than ever!"
+                </p>
+                <h5 class="card-title">John Doe</h5>
+                <div class="greenStar">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card">
-            <img
-              src="path/to/customer2.jpg"
-              class="card-img-top"
-              alt="Customer 2"
-            />
-            <div class="card-body">
-              <p class="card-text">
-                "The personalized meal plans are fantastic. I've never felt so
-                supported in my health journey."
-              </p>
-              <h5 class="card-title">Jane Smith</h5>
-              <div class="text-warning">
-                &#9733;&#9733;&#9733;&#9733;&#9733;
+          <div class="col-md-4">
+            <div class="card customerCard">
+              <img
+                src="https://plus.unsplash.com/premium_photo-1690395794791-e85944b25c0f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                class="card-img-top customerImg"
+                alt="Customer 2"
+              />
+              <div class="card-body">
+                <p class="card-text">
+                  "The personalized meal plans are fantastic. I've never felt so
+                  supported in my health journey."
+                </p>
+                <h5 class="card-title">Jane Smith</h5>
+                <div class="greenStar">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card">
-            <img
-              src="path/to/customer3.jpg"
-              class="card-img-top"
-              alt="Customer 3"
-            />
-            <div class="card-body">
-              <p class="card-text">
-                "Thanks to NutriLife, I have achieved my health goals and
-                maintained them effortlessly."
-              </p>
-              <h5 class="card-title">Emily Johnson</h5>
-              <div class="text-warning">
-                &#9733;&#9733;&#9733;&#9733;&#9733;
+          <div class="col-md-4">
+            <div class="card customerCard">
+              <img
+                src="https://plus.unsplash.com/premium_photo-1689977968861-9c91dbb16049?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                class="card-img-top customerImg"
+                alt="Customer 3"
+              />
+              <div class="card-body">
+                <p class="card-text">
+                  "Thanks to NutriLife, I have achieved my health goals and
+                  maintained them effortlessly."
+                </p>
+                <h5 class="card-title">Juan Johnson</h5>
+                <div class="greenStar">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
               </div>
             </div>
           </div>
@@ -166,37 +266,83 @@
   </div>
 </div>
 
-<footer class="bg-light py-4 text-center">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-4">
-        <h5>About Us</h5>
-        <p>
-          NutriLife is dedicated to providing personalized nutrition advice to
-          help you achieve your health goals.
-        </p>
-      </div>
-      <div class="col-md-4">
-        <h5>Contact</h5>
-        <ul class="list-unstyled">
-          <li>Email: info@nutrilife.com</li>
-          <li>Phone: (123) 456-7890</li>
-          <li>Address: 123 Nutrition St, Wellness City</li>
+<div class="footerContainer">
+  <footer class="py-5">
+    <div class="row footerRow">
+      <div class="col-6 col-md-2 mb-3">
+        <h5>Menu</h5>
+        <ul class="nav flex-column">
+          <li class="nav-item mb-2">
+            <a
+              onclick="navigate('home')"
+              href="#"
+              class="nav-link p-0 text-body-secondary"
+              >Home</a
+            >
+          </li>
+          <li class="nav-item mb-2">
+            <a
+              onclick="navigate('about')"
+              href="#"
+              class="nav-link p-0 text-body-secondary"
+              >About Us</a
+            >
+          </li>
+          <li class="nav-item mb-2">
+            <a
+              onclick="navigate('contact')"
+              href="#"
+              class="nav-link p-0 text-body-secondary"
+              >Contact Us</a
+            >
+          </li>
         </ul>
       </div>
-      <div class="col-md-4">
-        <h5>Follow Us</h5>
-        <ul class="list-unstyled">
-          <li><a href="#">Facebook</a></li>
-          <li><a href="#">Twitter</a></li>
-          <li><a href="#">Instagram</a></li>
-        </ul>
+
+      <div class="col-md-5 offset-md-1 mb-3">
+        <form>
+          <h5>Subscribe to our newsletter</h5>
+          <p>Monthly digest of what's new and exciting from us.</p>
+          <div class="d-flex flex-column flex-sm-row w-100 gap-2">
+            <label for="newsletter1" class="visually-hidden"
+              >Email address</label
+            >
+            <input
+              id="newsletter1"
+              type="text"
+              class="form-control"
+              placeholder="Email address"
+            />
+            <button class="btn btn-primary" type="button">Subscribe</button>
+          </div>
+        </form>
       </div>
     </div>
-    <div class="row mt-3">
-      <div class="col-md-12 text-center">
-        <p class="mb-0">&copy; 2025 NutriLife. All rights reserved.</p>
-      </div>
+
+    <div
+      class="d-flex flex-column flex-sm-row justify-content-between py-4 my-4 border-top"
+    >
+      <p>© 2025 NutriLife, Inc. All rights reserved.</p>
+      <ul class="list-unstyled d-flex">
+        <li class="ms-3">
+          <a class="link-body-emphasis" href="#"
+            ><svg class="bi" width="24" height="24">
+              <use xlink:href="#twitter"></use></svg
+          ></a>
+        </li>
+        <li class="ms-3">
+          <a class="link-body-emphasis" href="#"
+            ><svg class="bi" width="24" height="24">
+              <use xlink:href="#instagram"></use></svg
+          ></a>
+        </li>
+        <li class="ms-3">
+          <a class="link-body-emphasis" href="#"
+            ><svg class="bi" width="24" height="24">
+              <use xlink:href="#facebook"></use></svg
+          ></a>
+        </li>
+      </ul>
     </div>
-  </div>
-</footer>
+  </footer>
+</div>

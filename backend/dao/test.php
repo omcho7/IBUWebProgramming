@@ -15,12 +15,12 @@ $contactformDao = new ContactFormDao();
 
 
 
-// Insert a new user (Customer)
+
 $userDao->insert([
-   'username' => 'John Doe',
-   'email' => 'john@example.com',
+   'username' => 'Samatnha Doe',
+   'email' => 'sam@example.com',
    'password' => password_hash('password123', PASSWORD_DEFAULT),
-   'role' => 'Client'
+   'role' => 'Nutritionist'
 ]);
 
 

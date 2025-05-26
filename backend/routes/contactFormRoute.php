@@ -1,5 +1,6 @@
 <?php
 require_once 'backend\services\ContactFormService.php';
+require_once 'backend/data/roles.php'; // Include roles constants
 
 $contactFormService = new ContactFormService();
 
@@ -29,9 +30,16 @@ $contactFormService = new ContactFormService();
  * )
  */
 Flight::route('POST /contact-form', function() use ($contactFormService) {
+    // Public route - no authentication required for submissions
     $data = Flight::request()->data->getData();
     try {
         $submission = $contactFormService->submitContactForm($data);
+        
+        // Optional: If you want to send acknowledgment only to authenticated users
+        if ($user = Flight::get('user')) {
+            $contactFormService->sendAcknowledgmentEmail($data['email']);
+        }
+        
         Flight::json($submission);
     } catch (Exception $e) {
         Flight::json(['error' => $e->getMessage()], 400);
@@ -46,11 +54,23 @@ Flight::route('POST /contact-form', function() use ($contactFormService) {
  *     @OA\Response(
  *         response=200,
  *         description="List of all contact form submissions"
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Forbidden - admin access required"
  *     )
  * )
  */
 Flight::route('GET /contact-form', function() use ($contactFormService) {
-    Flight::json($contactFormService->getAllSubmissions());
+    // Only admins can view all submissions
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
+    
+    try {
+        $submissions = $contactFormService->getAllSubmissions();
+        Flight::json($submissions);
+    } catch (Exception $e) {
+        Flight::json(['error' => $e->getMessage()], 400);
+    }
 });
 
 /**
@@ -69,12 +89,19 @@ Flight::route('GET /contact-form', function() use ($contactFormService) {
  *         description="Contact form submission details"
  *     ),
  *     @OA\Response(
+ *         response=403,
+ *         description="Forbidden - admin access required"
+ *     ),
+ *     @OA\Response(
  *         response=404,
  *         description="Submission not found"
  *     )
  * )
  */
 Flight::route('GET /contact-form/@id', function($id) use ($contactFormService) {
+    // Only admins can view specific submissions
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
+    
     try {
         $submission = $contactFormService->getSubmissionById($id);
         Flight::json($submission);
@@ -99,12 +126,19 @@ Flight::route('GET /contact-form/@id', function($id) use ($contactFormService) {
  *         description="Submission deleted successfully"
  *     ),
  *     @OA\Response(
+ *         response=403,
+ *         description="Forbidden - admin access required"
+ *     ),
+ *     @OA\Response(
  *         response=404,
  *         description="Submission not found"
  *     )
  * )
  */
 Flight::route('DELETE /contact-form/@id', function($id) use ($contactFormService) {
+    // Only admins can delete submissions
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
+    
     try {
         $contactFormService->deleteSubmission($id);
         Flight::json(['message' => 'Submission deleted successfully']);

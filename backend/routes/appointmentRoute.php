@@ -1,5 +1,6 @@
 <?php
 require_once 'C:\xampp\htdocs\OmarOsmanovic\IBUWebProgramming\backend\services\AppointmentsService.php';
+require_once 'backend/data/roles.php'; 
 
 $appointmentsService = new AppointmentsService();
 
@@ -25,11 +26,27 @@ $appointmentsService = new AppointmentsService();
  *     @OA\Response(
  *         response=400,
  *         description="Validation error"
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Forbidden - insufficient permissions"
  *     )
  * )
  */
 Flight::route('POST /appointments', function() use ($appointmentsService) {
+    // Only clients can create appointments
+    Flight::auth_middleware()->authorizeRole(Roles::CLIENT);
+    
     $data = Flight::request()->data->getData();
+    
+    // Verify the client is creating appointment for themselves
+    $currentUser = Flight::get('user');
+    if ($currentUser['id'] != $data['user_id']) {
+        Flight::halt(403, json_encode([
+            'error' => 'You can only create appointments for yourself'
+        ]));
+    }
+    
     try {
         $appointment = $appointmentsService->createAppointment($data);
         Flight::json($appointment);
@@ -63,11 +80,19 @@ Flight::route('POST /appointments', function() use ($appointmentsService) {
  *     @OA\Response(
  *         response=400,
  *         description="Validation error"
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Forbidden - only nutritionists can update status"
  *     )
  * )
  */
 Flight::route('PUT /appointments/@id/status', function($id) use ($appointmentsService) {
+    // Only nutritionists can update appointment status
+    Flight::auth_middleware()->authorizeRole(Roles::NUTRITIONIST);
+    
     $data = Flight::request()->data->getData();
+    
     try {
         $appointment = $appointmentsService->updateAppointmentStatus($id, $data['status']);
         Flight::json($appointment);
@@ -90,10 +115,34 @@ Flight::route('PUT /appointments/@id/status', function($id) use ($appointmentsSe
  *     @OA\Response(
  *         response=200,
  *         description="List of appointments"
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Forbidden - can only view your own appointments"
  *     )
  * )
  */
 Flight::route('GET /appointments/user/@userId', function($userId) use ($appointmentsService) {
+    // Both clients and nutritionists can view appointments
+    Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
+    
+    $currentUser = Flight::get('user');
+    
+    if ($currentUser['role'] === Roles::CLIENT && $currentUser['id'] != $userId) {
+        Flight::halt(403, json_encode([
+            'error' => 'You can only view your own appointments'
+        ]));
+    }
+    
+    if ($currentUser['role'] === Roles::NUTRITIONIST) {
+        $appointments = $appointmentsService->getAppointmentsByUserId($userId);
+        $filteredAppointments = array_filter($appointments, function($appt) use ($currentUser) {
+            return $appt['nutritionist_id'] == $currentUser['id'];
+        });
+        Flight::json(array_values($filteredAppointments));
+        return;
+    }
+    
     Flight::json($appointmentsService->getAppointmentsByUserId($userId));
 });
 ?>

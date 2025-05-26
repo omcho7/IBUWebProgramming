@@ -36,17 +36,11 @@ class UserService extends BaseService {
     }
 
     public function getAllClients() {
-        $users = $this->dao->getAll();
-        return array_filter($users, function ($user) {
-            return $user['role'] === 'Client';
-        });
+        return $this->dao->getAllByRole('Client');
     }
 
     public function getAllNutritionists() {
-        $users = $this->dao->getAll();
-        return array_filter($users, function ($user) {
-            return $user['role'] === 'Nutritionist';
-        });
+        return $this->dao->getAllByRole('Nutritionist');
     }
 
     public function resetPassword($email, $newPassword) {

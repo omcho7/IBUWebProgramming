@@ -1,5 +1,6 @@
 <?php
 require_once 'C:\xampp\htdocs\OmarOsmanovic\IBUWebProgramming\backend\services\UserService.php';
+require_once 'backend/data/roles.php'; // Include roles constants
 
 $userService = new UserService();
 
@@ -79,11 +80,39 @@ Flight::route('POST /users/login', function() use ($userService) {
  *     @OA\Response(
  *         response=200,
  *         description="List of clients"
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Forbidden - only nutritionists can view client list"
  *     )
  * )
  */
 Flight::route('GET /users/clients', function() use ($userService) {
-    Flight::json($userService->getAllClients());
+    try {
+        // First verify the token
+        $headers = getallheaders();
+        if (!isset($headers['Authorization'])) {
+            throw new Exception('Missing authorization header', 401);
+        }
+        
+        $token = str_replace('Bearer ', '', $headers['Authorization']);
+        Flight::auth_middleware()->verifyToken($token);
+        
+        // Then verify the Nutritionist role
+        Flight::auth_middleware()->authorizeRole('Nutritionist');
+        
+        $clients = $userService->getAllClients();
+        Flight::json([
+            'success' => true,
+            'data' => $clients
+        ]);
+    } catch (Exception $e) {
+        error_log("Error in /users/clients: " . $e->getMessage());
+        Flight::json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], $e->getCode() ?: 500);
+    }
 });
 
 /**
@@ -94,10 +123,16 @@ Flight::route('GET /users/clients', function() use ($userService) {
  *     @OA\Response(
  *         response=200,
  *         description="List of nutritionists"
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Forbidden - only clients can view nutritionist list"
  *     )
  * )
  */
 Flight::route('GET /users/nutritionists', function() use ($userService) {
+    // Only clients can view the list of nutritionists
+    Flight::auth_middleware()->authorizeRole(Roles::CLIENT);
     Flight::json($userService->getAllNutritionists());
 });
 
@@ -118,12 +153,19 @@ Flight::route('GET /users/nutritionists', function() use ($userService) {
  *         description="User details"
  *     ),
  *     @OA\Response(
+ *         response=403,
+ *         description="Forbidden - only admins can look up users by email"
+ *     ),
+ *     @OA\Response(
  *         response=404,
  *         description="User not found"
  *     )
  * )
  */
-Flight::route('POST /users/email', function() {
+Flight::route('POST /users/email', function() use ($userService) {
+    // Only admins can look up users by email
+    Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
+    
     $data = Flight::request()->data->getData();
     $userDao = new UserDao();
     $user = $userDao->getByEmail($data['email']);

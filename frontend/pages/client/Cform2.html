@@ -27,7 +27,7 @@
       </div>
       <h2 class="text-center">Do you have any allergies?</h2>
       <h4 class="text-center">(Select all that apply)</h4>
-      <form class="allergiesForm">
+      <form id="allergiesForm" class="allergiesForm">
         <div class="form-check">
           <input
             class="form-check-input"
@@ -101,7 +101,6 @@
           <label class="form-check-label" for="allergy8">❓ Other</label>
         </div>
         <button
-          onclick="navigate('/client/Cdashboard')"
           type="submit"
           class="btn btn-primary btn-block loginBtn"
           style="margin-top: 40px"
@@ -112,3 +111,19 @@
     </div>
   </div>
 </div>
+
+<!-- Initialize allergies form -->
+<script type="module">
+  import RegisterService from '../../services/RegisterService.js';
+  
+  // Initialize form when document is ready
+  $(document).ready(function() {
+    // Handle form submission
+    $("#allergiesForm").on('submit', function(e) {
+      e.preventDefault();
+      
+      // Finalize registration
+      RegisterService.finalizeRegistration();
+    });
+  });
+</script>

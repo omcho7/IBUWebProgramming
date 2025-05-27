@@ -14,23 +14,27 @@
           Sign Up
         </h2></span
       >
-      <form class="loginForm">
+      <form id="signupForm" class="loginForm">
         <div class="form-group loginGroup">
           <label for="username">Username</label>
           <input
             type="text"
             class="form-control"
             id="username"
+            name="username"
             placeholder="Choose a username"
+            required
           />
         </div>
         <div class="form-group loginGroup">
-          <label for="username">Email</label>
+          <label for="email">Email</label>
           <input
-            type="text"
+            type="email"
             class="form-control"
-            id="username"
+            id="email"
+            name="email"
             placeholder="Enter your email"
+            required
           />
         </div>
         <div class="form-group loginGroup">
@@ -39,20 +43,23 @@
             type="password"
             class="form-control"
             id="password"
+            name="password"
             placeholder="Enter your password"
+            required
           />
         </div>
         <div class="form-group loginGroup">
-          <label for="password">Confirm Password</label>
+          <label for="confirmPassword">Confirm Password</label>
           <input
             type="password"
             class="form-control"
-            id="password"
+            id="confirmPassword"
+            name="confirmPassword"
             placeholder="Confirm your password"
+            required
           />
         </div>
         <button
-          onclick="navigate('/client/Cform')"
           type="submit"
           class="btn btn-primary btn-block loginBtn"
         >
@@ -68,3 +75,13 @@
     </div>
   </div>
 </div>
+
+<!-- Initialize signup form -->
+<script type="module">
+  import RegisterService from '../services/RegisterService.js';
+  
+  // Initialize form when document is ready
+  $(document).ready(function() {
+    RegisterService.initSignupForm();
+  });
+</script>

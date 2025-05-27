@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Health Goal Form</title>
+</head>
+<body>
+    <h1>Test Health Goal Submission</h1>
+    <form action="http://localhost/OmarOsmanovic/IBUWebProgramming/health-goals" method="POST">
+        <div>
+            <label for="user_id">User ID:</label>
+            <input type="text" id="user_id" name="user_id" value="32" required>
+        </div>
+        <div>
+            <label for="goal_type">Goal Type:</label>
+            <select id="goal_type" name="goal_type" required>
+                <option value="LoseWeight">Lose Weight</option>
+                <option value="BuildMuscle">Build Muscle</option>
+                <option value="ImproveStamina">Improve Stamina</option>
+                <option value="EatHealthier">Eat Healthier</option>
+                <option value="ReduceStress">Reduce Stress</option>
+                <option value="ImproveSleep">Improve Sleep</option>
+                <option value="IncreaseEnergy">Increase Energy</option>
+                <option value="MentalClarity">Mental Clarity</option>
+                <option value="BoostImmunity">Boost Immunity</option>
+            </select>
+        </div>
+        <div>
+            <label for="target_value">Target Value:</label>
+            <input type="text" id="target_value" name="target_value" value="100" required>
+        </div>
+        <div>
+            <label for="current_value">Current Value:</label>
+            <input type="text" id="current_value" name="current_value" value="0" required>
+        </div>
+        <div>
+            <label for="deadline">Deadline:</label>
+            <input type="date" id="deadline" name="deadline" value="2025-08-24" required>
+        </div>
+        <div>
+            <button type="submit">Submit Health Goal</button>
+        </div>
+    </form>
+</body>
+</html> 

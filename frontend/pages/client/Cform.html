@@ -30,7 +30,7 @@
             class="form-check-input"
             type="checkbox"
             id="goal1"
-            value="Lose Weight"
+            value="LoseWeight"
           />
           <label class="form-check-label" for="goal1">⚖️ Lose Weight</label>
         </div>
@@ -39,7 +39,7 @@
             class="form-check-input"
             type="checkbox"
             id="goal2"
-            value="Build Muscle"
+            value="BuildMuscle"
           />
           <label class="form-check-label" for="goal2">💪 Build Muscle</label>
         </div>
@@ -48,7 +48,7 @@
             class="form-check-input"
             type="checkbox"
             id="goal3"
-            value="Improve Stamina"
+            value="ImproveStamina"
           />
           <label class="form-check-label" for="goal3">🏃 Improve Stamina</label>
         </div>
@@ -57,7 +57,7 @@
             class="form-check-input"
             type="checkbox"
             id="goal4"
-            value="Eat Healthier"
+            value="EatHealthier"
           />
           <label class="form-check-label" for="goal4">🥗 Eat Healthier</label>
         </div>
@@ -66,7 +66,7 @@
             class="form-check-input"
             type="checkbox"
             id="goal6"
-            value="Reduce Stress"
+            value="ReduceStress"
           />
           <label class="form-check-label" for="goal6">🧘 Reduce Stress</label>
         </div>
@@ -75,7 +75,7 @@
             class="form-check-input"
             type="checkbox"
             id="goal7"
-            value="Improve Sleep Quality"
+            value="ImproveSleep"
           />
           <label class="form-check-label" for="goal7"
             >😴 Improve Sleep Quality</label
@@ -86,7 +86,7 @@
             class="form-check-input"
             type="checkbox"
             id="goal8"
-            value="Increase Energy Levels"
+            value="IncreaseEnergy"
           />
           <label class="form-check-label" for="goal8"
             >⚡ Increase Energy Levels</label
@@ -97,7 +97,7 @@
             class="form-check-input"
             type="checkbox"
             id="goal9"
-            value="Enhance Mental Clarity"
+            value="MentalClarity"
           />
           <label class="form-check-label" for="goal9"
             >🧠 Enhance Mental Clarity</label
@@ -108,12 +108,11 @@
             class="form-check-input"
             type="checkbox"
             id="goal10"
-            value="Boost Immunity"
+            value="BoostImmunity"
           />
           <label class="form-check-label" for="goal10">🛡️ Boost Immunity</label>
         </div>
         <button
-          onclick="navigate('/client/Cform2')"
           type="submit"
           class="btn btn-primary btn-block loginBtn"
           style="margin-top: 40px"
@@ -124,3 +123,13 @@
     </div>
   </div>
 </div>
+
+<!-- Initialize health goals form -->
+<script type="module">
+  import RegisterService from '../../services/RegisterService.js';
+  
+  // Initialize form when document is ready
+  $(document).ready(function() {
+    RegisterService.initHealthGoalsForm();
+  });
+</script>

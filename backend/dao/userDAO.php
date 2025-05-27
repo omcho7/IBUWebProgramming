@@ -12,5 +12,13 @@ class UserDao extends BaseDao {
         $stmt->execute();
         return $stmt->fetch();
     }
+
+    // Add this method if it doesn't exist
+    public function getAllByRole($role) {
+        $stmt = $this->connection->prepare("SELECT * FROM " . $this->table . " WHERE role = :role");
+        $stmt->bindParam(':role', $role);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }
 ?>

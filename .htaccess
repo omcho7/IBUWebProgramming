@@ -1,4 +1,16 @@
 RewriteEngine On
+
+# Allow direct access to frontend files
+RewriteCond %{REQUEST_URI} ^/frontend/.*$
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^(.*)$ $1 [L]
+
+# Allow direct access to assets
+RewriteCond %{REQUEST_URI} ^/assets/.*$
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^(.*)$ $1 [L]
+
+# Route all other requests to index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]

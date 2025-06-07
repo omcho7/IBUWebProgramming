@@ -96,7 +96,19 @@ const HealthGoalsService = {
     },
 
     updateProgress: function(id, progress, callback, error_callback) {
-        RestClient.patch(`health-goals/${id}/progress`, { progress }, callback, error_callback);
+        RestClient.patch(`backend/health-goals/${id}/progress`, { progress }, callback, error_callback);
+    },
+
+    getHealthGoalsByUserId: function(userId) {
+        return RestClient.get('backend/health-goals/user/' + userId);
+    },
+
+    updateHealthGoalCurrentValue: function(goalId, currentValue) {
+        return RestClient.put('backend/health-goals/' + goalId + '/current-value', { current_value: currentValue });
+    },
+
+    updateHealthGoalDeadline: function(goalId, deadline) {
+        return RestClient.put('backend/health-goals/' + goalId + '/deadline', { deadline: deadline });
     }
 };
 

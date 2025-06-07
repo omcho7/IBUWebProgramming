@@ -1,9 +1,5 @@
-import UserService from '../services/UserService.js';
 import Constants from '../utils/constants.js';
 import Utils from '../utils/utils.js';
-
-// Expose Utils globally for debugging
-window.Utils = Utils;
 
 // Initialize login form
 function initLogin() {
@@ -18,7 +14,7 @@ function initLogin() {
         };
     }
 
-    $('#loginForm').on('submit', async function(e) {
+    $('#loginForm').on('submit', function(e) {
         e.preventDefault();
         console.log('Login form submitted');
         
@@ -37,43 +33,39 @@ function initLogin() {
 
         console.log('Sending login request to:', `${Constants.PROJECT_BASE_URL}auth/login`);
         console.log('Request payload:', entity);
-
-        try {
-            const response = await fetch(`${Constants.PROJECT_BASE_URL}auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(entity)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Login failed');
+        
+        $.ajax({
+            url: `${Constants.PROJECT_BASE_URL}auth/login`,
+            type: 'POST',
+            data: JSON.stringify(entity),
+            contentType: 'application/json',
+            success: function(result) {
+                console.log("Login response:", result);
+                if (result.success) {
+                    console.log("Login successful, token:", result.data.token);
+                    localStorage.setItem("user_token", result.data.token);
+                    
+                    const user = Utils.parseJwt(result.data.token);
+                    console.log("Decoded user:", user);
+                    
+                    // Get role from nested user object
+                    const role = user.user ? user.user.role : user.role;
+                    console.log("User role:", role);
+                    
+                    const redirectPath = role === 'Nutritionist' 
+                        ? 'admin/Adashboard' 
+                        : 'client/Cdashboard';
+                    console.log("Attempting redirect to:", redirectPath);
+                    navigate(redirectPath);
+                } else {
+                    showError(result.message || 'Login failed');
+                }
+            },
+            error: function(error) {
+                console.error("Full login error:", error);
+                showError(error.responseJSON?.message || 'Login failed - please try again');
             }
-
-            const result = await response.json();
-            console.log("Parsed result:", result);
-
-            if (result.success) {
-                console.log("Login successful, token:", result.data.token);
-                localStorage.setItem("user_token", result.data.token);
-                
-                const user = Utils.parseJwt(result.data.token);
-                console.log("Decoded user:", user);
-                
-                const redirectPath = user.role === 'Nutritionist' 
-                    ? 'pages/admin/Adashboard.html' 
-                    : 'pages/client/Cdashboard.html';
-                console.log("Attempting redirect to:", redirectPath);
-                window.location.href = redirectPath;
-            } else {
-                showError(result.message || 'Login failed');
-            }
-        } catch (error) {
-            console.error("Full login error:", error);
-            showError(error.message || 'Login failed - please try again');
-        }
+        });
     });
 }
 

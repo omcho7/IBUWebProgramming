@@ -127,6 +127,18 @@ const MealPlansService = {
             
             if (callback) callback(response);
         }, errorCallback);
+    },
+
+    getMealPlansByClientId: function(clientId, callback, errorCallback) {
+        RestClient.get('backend/meal-plans/client/' + clientId, callback, errorCallback);
+    },
+
+    createMealPlan: function(mealPlan, callback, errorCallback) {
+        RestClient.post('backend/meal-plans', mealPlan, callback, errorCallback);
+    },
+
+    updateMealPlan: function(id, mealPlan, callback, errorCallback) {
+        RestClient.put('backend/meal-plans/' + id, mealPlan, callback, errorCallback);
     }
 };
 

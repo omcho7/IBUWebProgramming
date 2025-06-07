@@ -6,7 +6,7 @@ $appointmentsService = new AppointmentsService();
 
 /**
  * @OA\Post(
- *     path="/appointments",
+ *     path="/backend/appointments",
  *     tags={"Appointments"},
  *     summary="Create a new appointment",
  *     @OA\RequestBody(
@@ -33,7 +33,7 @@ $appointmentsService = new AppointmentsService();
  *     )
  * )
  */
-Flight::route('POST /appointments', function() use ($appointmentsService) {
+Flight::route('POST /backend/appointments', function() use ($appointmentsService) {
     // Only clients can create appointments
     Flight::auth_middleware()->authorizeRole(Roles::CLIENT);
     
@@ -57,7 +57,7 @@ Flight::route('POST /appointments', function() use ($appointmentsService) {
 
 /**
  * @OA\Put(
- *     path="/appointments/{id}/status",
+ *     path="/backend/appointments/{id}/status",
  *     tags={"Appointments"},
  *     summary="Update appointment status",
  *     @OA\Parameter(
@@ -87,7 +87,7 @@ Flight::route('POST /appointments', function() use ($appointmentsService) {
  *     )
  * )
  */
-Flight::route('PUT /appointments/@id/status', function($id) use ($appointmentsService) {
+Flight::route('PUT /backend/appointments/@id/status', function($id) use ($appointmentsService) {
     // Only nutritionists can update appointment status
     Flight::auth_middleware()->authorizeRole(Roles::NUTRITIONIST);
     
@@ -103,7 +103,7 @@ Flight::route('PUT /appointments/@id/status', function($id) use ($appointmentsSe
 
 /**
  * @OA\Get(
- *     path="/appointments/user/{userId}",
+ *     path="/backend/appointments/user/{userId}",
  *     tags={"Appointments"},
  *     summary="Get appointments by user ID",
  *     @OA\Parameter(
@@ -122,7 +122,7 @@ Flight::route('PUT /appointments/@id/status', function($id) use ($appointmentsSe
  *     )
  * )
  */
-Flight::route('GET /appointments/user/@userId', function($userId) use ($appointmentsService) {
+Flight::route('GET /backend/appointments/user/@userId', function($userId) use ($appointmentsService) {
     // Both clients and nutritionists can view appointments
     Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
     

@@ -6,7 +6,7 @@ $userService = new UserService();
 
 /**
  * @OA\Post(
- *     path="/users/register",
+ *     path="/backend/users/register",
  *     tags={"Users"},
  *     summary="Register a new user",
  *     @OA\RequestBody(
@@ -29,7 +29,7 @@ $userService = new UserService();
  *     )
  * )
  */
-Flight::route('POST /users/register', function() use ($userService) {
+Flight::route('POST /backend/users/register', function() use ($userService) {
     $data = Flight::request()->data->getData();
     try {
         $user = $userService->registerUser($data);
@@ -41,7 +41,7 @@ Flight::route('POST /users/register', function() use ($userService) {
 
 /**
  * @OA\Post(
- *     path="/users/login",
+ *     path="/backend/users/login",
  *     tags={"Users"},
  *     summary="Login a user",
  *     @OA\RequestBody(
@@ -62,7 +62,7 @@ Flight::route('POST /users/register', function() use ($userService) {
  *     )
  * )
  */
-Flight::route('POST /users/login', function() use ($userService) {
+Flight::route('POST /backend/users/login', function() use ($userService) {
     $data = Flight::request()->data->getData();
     try {
         $user = $userService->loginUser($data['email'], $data['password']);
@@ -74,7 +74,7 @@ Flight::route('POST /users/login', function() use ($userService) {
 
 /**
  * @OA\Get(
- *     path="/users/clients",
+ *     path="/backend/users/clients",
  *     tags={"Users"},
  *     summary="Get all clients",
  *     @OA\Response(
@@ -87,7 +87,7 @@ Flight::route('POST /users/login', function() use ($userService) {
  *     )
  * )
  */
-Flight::route('GET /users/clients', function() use ($userService) {
+Flight::route('GET /backend/users/clients', function() use ($userService) {
     try {
         // First verify the token
         $headers = getallheaders();
@@ -107,7 +107,7 @@ Flight::route('GET /users/clients', function() use ($userService) {
             'data' => $clients
         ]);
     } catch (Exception $e) {
-        error_log("Error in /users/clients: " . $e->getMessage());
+        error_log("Error in /backend/users/clients: " . $e->getMessage());
         Flight::json([
             'success' => false,
             'error' => $e->getMessage()
@@ -117,7 +117,7 @@ Flight::route('GET /users/clients', function() use ($userService) {
 
 /**
  * @OA\Get(
- *     path="/users/nutritionists",
+ *     path="/backend/users/nutritionists",
  *     tags={"Users"},
  *     summary="Get all nutritionists",
  *     @OA\Response(
@@ -130,7 +130,7 @@ Flight::route('GET /users/clients', function() use ($userService) {
  *     )
  * )
  */
-Flight::route('GET /users/nutritionists', function() use ($userService) {
+Flight::route('GET /backend/users/nutritionists', function() use ($userService) {
     // Only clients can view the list of nutritionists
     Flight::auth_middleware()->authorizeRole(Roles::CLIENT);
     Flight::json($userService->getAllNutritionists());
@@ -138,7 +138,7 @@ Flight::route('GET /users/nutritionists', function() use ($userService) {
 
 /**
  * @OA\Post(
- *     path="/users/email",
+ *     path="/backend/users/email",
  *     tags={"Users"},
  *     summary="Get user by email",
  *     @OA\RequestBody(
@@ -162,7 +162,7 @@ Flight::route('GET /users/nutritionists', function() use ($userService) {
  *     )
  * )
  */
-Flight::route('POST /users/email', function() use ($userService) {
+Flight::route('POST /backend/users/email', function() use ($userService) {
     // Only admins can look up users by email
     Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     

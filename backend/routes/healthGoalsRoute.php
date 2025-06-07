@@ -6,7 +6,7 @@ $healthGoalsService = new HealthGoalsService();
 
 /**
  * @OA\Post(
- *     path="/health-goals",
+ *     path="/backend/health-goals",
  *     tags={"Health Goals"},
  *     summary="Add a new health goal",
  *     @OA\RequestBody(
@@ -34,7 +34,7 @@ $healthGoalsService = new HealthGoalsService();
  *     )
  * )
  */
-Flight::route('POST /health-goals', function() use ($healthGoalsService) {
+Flight::route('POST /backend/health-goals', function() use ($healthGoalsService) {
     // Get all request data, including form data, JSON data, and query parameters
     $formData = Flight::request()->data->getData();
     $queryParams = Flight::request()->query->getData();
@@ -159,7 +159,7 @@ Flight::route('POST /health-goals', function() use ($healthGoalsService) {
 
 /**
  * @OA\Put(
- *     path="/health-goals/{id}/current-value",
+ *     path="/backend/health-goals/{id}/current-value",
  *     tags={"Health Goals"},
  *     summary="Update the current value of a health goal",
  *     @OA\Parameter(
@@ -189,7 +189,7 @@ Flight::route('POST /health-goals', function() use ($healthGoalsService) {
  *     )
  * )
  */
-Flight::route('PUT /health-goals/@id/current-value', function($id) use ($healthGoalsService) {
+Flight::route('PUT /backend/health-goals/@id/current-value', function($id) use ($healthGoalsService) {
     // Both clients and nutritionists can update their goals
     Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
     
@@ -218,7 +218,7 @@ Flight::route('PUT /health-goals/@id/current-value', function($id) use ($healthG
 
 /**
  * @OA\Put(
- *     path="/health-goals/{id}/deadline",
+ *     path="/backend/health-goals/{id}/deadline",
  *     tags={"Health Goals"},
  *     summary="Update the deadline of a health goal",
  *     @OA\Parameter(
@@ -248,7 +248,7 @@ Flight::route('PUT /health-goals/@id/current-value', function($id) use ($healthG
  *     )
  * )
  */
-Flight::route('PUT /health-goals/@id/deadline', function($id) use ($healthGoalsService) {
+Flight::route('PUT /backend/health-goals/@id/deadline', function($id) use ($healthGoalsService) {
     // Both clients and nutritionists can update their goals
     Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
     
@@ -277,7 +277,7 @@ Flight::route('PUT /health-goals/@id/deadline', function($id) use ($healthGoalsS
 
 /**
  * @OA\Get(
- *     path="/health-goals/user/{userId}",
+ *     path="/backend/health-goals/user/{userId}",
  *     tags={"Health Goals"},
  *     summary="Get health goals by user ID",
  *     @OA\Parameter(
@@ -296,7 +296,7 @@ Flight::route('PUT /health-goals/@id/deadline', function($id) use ($healthGoalsS
  *     )
  * )
  */
-Flight::route('GET /health-goals/user/@userId', function($userId) use ($healthGoalsService) {
+Flight::route('GET /backend/health-goals/user/@userId', function($userId) use ($healthGoalsService) {
     // Both clients and nutritionists can view health goals
     Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
     

@@ -190,7 +190,7 @@ const RegisterService = {
         
         // Use regular AJAX instead of RestClient for more control
         $.ajax({
-            url: Constants.PROJECT_BASE_URL + "auth/register",
+            url: Constants.PROJECT_BASE_URL + "backend/auth/register",
             type: "POST",
             data: userData,
             success: function(response) {
@@ -274,7 +274,7 @@ const RegisterService = {
             
             // Use direct AJAX call instead of form submission
             $.ajax({
-                url: Constants.PROJECT_BASE_URL + "health-goals",
+                url: Constants.PROJECT_BASE_URL + "backend/health-goals",
                 type: "POST",
                 contentType: "application/x-www-form-urlencoded",
                 data: {
@@ -322,7 +322,7 @@ const RegisterService = {
         
         // Use regular AJAX to avoid content-type issues
         $.ajax({
-            url: Constants.PROJECT_BASE_URL + "auth/login",
+            url: Constants.PROJECT_BASE_URL + "backend/auth/login",
             type: "POST",
             data: loginData,
             success: function(result) {

@@ -6,7 +6,7 @@ $mealPlansService = new MealPlansService();
 
 /**
  * @OA\Post(
- *     path="/meal-plans",
+ *     path="/backend/meal-plans",
  *     tags={"Meal Plans"},
  *     summary="Create a new meal plan",
  *     @OA\RequestBody(
@@ -34,7 +34,7 @@ $mealPlansService = new MealPlansService();
  *     )
  * )
  */
-Flight::route('POST /meal-plans', function() use ($mealPlansService) {
+Flight::route('POST /backend/meal-plans', function() use ($mealPlansService) {
     // Only nutritionists can create meal plans
     Flight::auth_middleware()->authorizeRole(Roles::NUTRITIONIST);
     
@@ -58,7 +58,7 @@ Flight::route('POST /meal-plans', function() use ($mealPlansService) {
 
 /**
  * @OA\Put(
- *     path="/meal-plans/{id}",
+ *     path="/backend/meal-plans/{id}",
  *     tags={"Meal Plans"},
  *     summary="Update a meal plan",
  *     @OA\Parameter(
@@ -77,7 +77,7 @@ Flight::route('POST /meal-plans', function() use ($mealPlansService) {
  *     )
  * )
  */
-Flight::route('PUT /meal-plans/@id', function($id) use ($mealPlansService) {
+Flight::route('PUT /backend/meal-plans/@id', function($id) use ($mealPlansService) {
     // Only nutritionists can update meal plans
     Flight::auth_middleware()->authorizeRole(Roles::NUTRITIONIST);
     
@@ -107,7 +107,7 @@ Flight::route('PUT /meal-plans/@id', function($id) use ($mealPlansService) {
 
 /**
  * @OA\Get(
- *     path="/meal-plans/client/{clientId}",
+ *     path="/backend/meal-plans/client/{clientId}",
  *     tags={"Meal Plans"},
  *     summary="Get meal plans by client ID",
  *     @OA\Parameter(
@@ -126,7 +126,7 @@ Flight::route('PUT /meal-plans/@id', function($id) use ($mealPlansService) {
  *     )
  * )
  */
-Flight::route('GET /meal-plans/client/@clientId', function($clientId) use ($mealPlansService) {
+Flight::route('GET /backend/meal-plans/client/@clientId', function($clientId) use ($mealPlansService) {
     // Both clients and nutritionists can view meal plans
     Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
     

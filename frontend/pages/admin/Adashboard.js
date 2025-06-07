@@ -7,7 +7,7 @@ import { default as RestClient } from '../../utils/rest-client.js';
 import Constants from '../../utils/constants.js';
 
 // Initialize dashboard
-function initAdminDashboard() {
+export function initAdminDashboard() {
   console.log("Initializing admin dashboard");
   
   const tokenData = Utils.getUser();
@@ -46,7 +46,7 @@ function setupTabs() {
 // Load all users
 async function loadAllUsers() {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('user_token');
     console.log("[DEBUG] Token retrieved:", token);
     
     if (!token) {
@@ -127,7 +127,7 @@ function viewClientDetails(userId) {
 
 async function loadClientAppointments(userId) {
     try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('user_token');
         const response = await fetch(`${Constants.PROJECT_BASE_URL}appointments/user/${userId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -168,7 +168,7 @@ async function loadClientAppointments(userId) {
 
 async function loadClientMealPlans(userId) {
     try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('user_token');
         const response = await fetch(`${Constants.PROJECT_BASE_URL}meal-plans/client/${userId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -207,7 +207,7 @@ async function loadClientMealPlans(userId) {
 
 async function loadClientHealthGoals(userId) {
     try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('user_token');
         const response = await fetch(`${Constants.PROJECT_BASE_URL}health-goals/user/${userId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -279,6 +279,3 @@ document.addEventListener("DOMContentLoaded", () => {
     initAdminDashboard();
   }
 });
-
-// Export the initAdminDashboard function
-export { initAdminDashboard };

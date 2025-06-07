@@ -406,9 +406,13 @@
     <script type="module">
       import { initAdminDashboard } from './Adashboard.js';
       import UserService from '../../services/UserService.js';
+      import Utils from '../../utils/utils.js';
       
-      // Make UserService available globally
+      // Make necessary functions available globally
       window.UserService = UserService;
+      window.logoutUser = function() {
+        Utils.logout();
+      };
       
       // Configure toastr
       toastr.options = {

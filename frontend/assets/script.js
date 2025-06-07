@@ -59,25 +59,37 @@ function loadPageScript(page) {
     script.src = pageScripts[page];
     script.id = "page-script";
     script.type = "module";
-    document.body.appendChild(script);
     
-    // Initialize the page after script loads
-    script.onload = function() {
-      // Use a small delay to ensure the module is fully loaded
-      setTimeout(() => {
-        const initializerName = pageInitializers[page];
-        if (initializerName) {
-          // Try different ways to access the initializer function
-          if (typeof window[initializerName] === 'function') {
+    // For ES modules, we need to handle initialization differently
+    if (page === "admin/Adashboard") {
+      script.onload = async function() {
+        try {
+          // Use proper relative path for module import
+          const module = await import('../../frontend/pages/admin/Adashboard.js');
+          if (module.initAdminDashboard) {
+            module.initAdminDashboard();
+          } else {
+            console.error(`Module ${pageScripts[page]} does not export initAdminDashboard`);
+          }
+        } catch (error) {
+          console.error(`Error loading module ${pageScripts[page]}:`, error);
+        }
+      };
+    } else {
+      // Handle non-module scripts as before
+      script.onload = function() {
+        setTimeout(() => {
+          const initializerName = pageInitializers[page];
+          if (initializerName && typeof window[initializerName] === 'function') {
             window[initializerName]();
-          } else if (typeof window.Adashboard?.init === 'function') {
-            window.Adashboard.init(); // Fallback for class-based initializers
           } else {
             console.log(`Could not find initializer ${initializerName} for ${page}`);
           }
-        }
-      }, 100);
-    };
+        }, 100);
+      };
+    }
+    
+    document.body.appendChild(script);
   }
 }
 

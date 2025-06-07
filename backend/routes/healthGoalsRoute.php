@@ -1,5 +1,5 @@
 <?php
-require_once 'backend\services\HealthGoalsService.php';
+require_once 'backend/services/HealthGoalsService.php';
 require_once 'backend/data/roles.php';
 
 $healthGoalsService = new HealthGoalsService();
@@ -297,17 +297,232 @@ Flight::route('PUT /backend/health-goals/@id/deadline', function($id) use ($heal
  * )
  */
 Flight::route('GET /backend/health-goals/user/@userId', function($userId) use ($healthGoalsService) {
-    // Both clients and nutritionists can view health goals
-    Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
-    
-    // Users can only view their own goals
-    $currentUser = Flight::get('user');
-    if ($currentUser->id != $userId) {
-        Flight::halt(403, json_encode([
-            'error' => 'You can only view your own health goals'
-        ]));
+    try {
+        // Both clients and nutritionists can view health goals
+        Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
+        
+        $currentUser = Flight::get('user');
+        $decoded = Flight::get('decoded_token');
+        
+        if (!$currentUser && !$decoded) {
+            Flight::json([
+                'success' => false,
+                'error' => 'User not authenticated'
+            ], 401);
+            return;
+        }
+
+        // Get user data from either direct object, nested user property, or decoded token
+        $userData = null;
+        if (is_object($currentUser)) {
+            $userData = isset($currentUser->user) ? $currentUser->user : $currentUser;
+        } elseif (is_array($currentUser)) {
+            $userData = isset($currentUser['user']) ? $currentUser['user'] : $currentUser;
+        } elseif ($decoded && isset($decoded->user)) {
+            $userData = $decoded->user;
+        }
+
+        if (!$userData || !isset($userData->role)) {
+            Flight::json([
+                'success' => false,
+                'error' => 'Invalid user data structure',
+                'debug' => [
+                    'current_user' => $currentUser,
+                    'decoded_token' => $decoded
+                ]
+            ], 401);
+            return;
+        }
+        
+        // Clients can only view their own health goals
+        if ($userData->role === Roles::CLIENT && $userData->id != $userId) {
+            Flight::json([
+                'success' => false,
+                'error' => 'You can only view your own health goals'
+            ], 403);
+            return;
+        }
+        
+        $healthGoals = $healthGoalsService->getHealthGoalsByUserId($userId);
+        Flight::json([
+            'success' => true,
+            'data' => $healthGoals || [] // Return empty array if null
+        ]);
+    } catch (Exception $e) {
+        error_log("Error in /backend/health-goals/user: " . $e->getMessage());
+        Flight::json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 500);
     }
-    
-    Flight::json($healthGoalsService->getHealthGoalsByUserId($userId));
+});
+
+/**
+ * @OA\Get(
+ *     path="/backend/health-goals",
+ *     tags={"Health Goals"},
+ *     summary="Get all health goals",
+ *     @OA\Response(
+ *         response=200,
+ *         description="List of health goals"
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Forbidden - can only view health goals"
+ *     )
+ * )
+ */
+Flight::route('GET /backend/health-goals', function() {
+    $healthGoalsService = new HealthGoalsService();
+    try {
+        $healthGoals = $healthGoalsService->getAllHealthGoals();
+        Flight::json([
+            'success' => true,
+            'data' => $healthGoals
+        ]);
+    } catch (Exception $e) {
+        Flight::json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}, true);
+
+// Get a single health goal
+Flight::route('GET /backend/health-goals/@id', function($id) use ($healthGoalsService) {
+    try {
+        Flight::auth_middleware()->authorizeRoles([Roles::NUTRITIONIST]);
+        
+        $goal = $healthGoalsService->getHealthGoalById($id);
+        if (!$goal) {
+            Flight::json([
+                'success' => false,
+                'error' => 'Health goal not found'
+            ], 404);
+            return;
+        }
+        
+        Flight::json([
+            'success' => true,
+            'data' => $goal
+        ]);
+    } catch (Exception $e) {
+        error_log("Error getting health goal: " . $e->getMessage());
+        Flight::json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 500);
+    }
+});
+
+// Update a health goal
+Flight::route('PUT /backend/health-goals/@id', function($id) use ($healthGoalsService) {
+    try {
+        Flight::auth_middleware()->authorizeRoles([Roles::NUTRITIONIST]);
+        
+        $data = Flight::request()->data->getData();
+        if (empty($data)) {
+            $data = json_decode(file_get_contents('php://input'), true);
+        }
+        
+        if (!$data) {
+            Flight::json([
+                'success' => false,
+                'error' => 'No data provided'
+            ], 400);
+            return;
+        }
+        
+        $goal = $healthGoalsService->updateHealthGoal($id, $data);
+        if (!$goal) {
+            Flight::json([
+                'success' => false,
+                'error' => 'Health goal not found'
+            ], 404);
+            return;
+        }
+        
+        Flight::json([
+            'success' => true,
+            'data' => $goal,
+            'message' => 'Health goal updated successfully'
+        ]);
+    } catch (Exception $e) {
+        error_log("Error updating health goal: " . $e->getMessage());
+        Flight::json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 500);
+    }
+});
+
+/**
+ * @OA\Delete(
+ *     path="/backend/health-goals/{id}",
+ *     tags={"Health Goals"},
+ *     summary="Delete a health goal",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="integer", example=1)
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Health goal deleted successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Health goal not found"
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Forbidden - can only delete your own goals"
+ *     )
+ * )
+ */
+Flight::route('DELETE /backend/health-goals/@id', function($id) use ($healthGoalsService) {
+    try {
+        // First verify the token
+        $headers = Flight::request()->getHeaders();
+        $token = isset($headers['Authorization']) ? $headers['Authorization'] : null;
+        
+        if (!$token) {
+            Flight::json([
+                'success' => false,
+                'error' => 'No token provided'
+            ], 401);
+            return;
+        }
+
+        // Remove 'Bearer ' prefix if present
+        $token = str_replace('Bearer ', '', $token);
+        
+        // Verify the token
+        if (!Flight::auth_middleware()->verifyToken($token)) {
+            return; // verifyToken will handle the error response
+        }
+
+        // Then authorize roles
+        Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
+        
+        $result = $healthGoalsService->deleteHealthGoal($id);
+        if ($result) {
+            Flight::json([
+                'success' => true,
+                'message' => 'Health goal deleted successfully'
+            ]);
+        } else {
+            Flight::json([
+                'success' => false,
+                'error' => 'Failed to delete health goal'
+            ], 404);
+        }
+    } catch (Exception $e) {
+        Flight::json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 500);
+    }
 });
 ?>

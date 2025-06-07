@@ -175,4 +175,55 @@ Flight::route('POST /backend/users/email', function() use ($userService) {
         Flight::json(['error' => 'User not found.'], 404);
     }
 });
+
+/**
+ * @OA\Delete(
+ *     path="/backend/users/delete/{id}",
+ *     tags={"Users"},
+ *     summary="Delete a client",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="Client ID",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Client deleted successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Forbidden - only nutritionists can delete clients"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Client not found"
+ *     )
+ * )
+ */
+Flight::route('DELETE /backend/users/delete/@id', function($id) use ($userService) {
+    try {
+        // First verify the token
+        $headers = getallheaders();
+        if (!isset($headers['Authorization'])) {
+            throw new Exception('Missing authorization header', 401);
+        }
+        
+        $token = str_replace('Bearer ', '', $headers['Authorization']);
+        Flight::auth_middleware()->verifyToken($token);
+        
+        // Then verify the Nutritionist role
+        Flight::auth_middleware()->authorizeRole('Nutritionist');
+        
+        $result = $userService->deleteClient($id);
+        Flight::json($result);
+    } catch (Exception $e) {
+        error_log("Error in /backend/users/delete: " . $e->getMessage());
+        Flight::json([
+            'success' => false,
+            'message' => $e->getMessage()
+        ], $e->getCode() ?: 500);
+    }
+});
 ?>

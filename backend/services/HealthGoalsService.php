@@ -3,8 +3,12 @@ require_once 'BaseService.php';
 require_once 'backend\dao\HealthGoalsDao.php';
 
 class HealthGoalsService extends BaseService {
+    private $healthGoalsDao;
+
     public function __construct() {
-        parent::__construct(new HealthGoalsDao());
+        parent::__construct();
+        $this->healthGoalsDao = new HealthGoalsDao();
+        $this->dao = $this->healthGoalsDao; // Set the base DAO as well
     }
 
     public function addHealthGoal($data) {
@@ -32,7 +36,7 @@ class HealthGoalsService extends BaseService {
         }
 
         try {
-            $result = $this->dao->add($data);
+            $result = $this->healthGoalsDao->add($data);
             error_log("Health goal add result: " . ($result ? "Success" : "Failed"));
             if (!$result) {
                 error_log("Failed to create health goal. DAO returned false.");
@@ -46,33 +50,33 @@ class HealthGoalsService extends BaseService {
     }
 
     public function updateCurrentValue($goalId, $currentValue) {
-        $goal = $this->dao->getById($goalId);
+        $goal = $this->healthGoalsDao->getById($goalId);
         if (!$goal) {
             throw new Exception("Health goal not found.");
         }
 
-        return $this->dao->update($goalId, ['current_value' => $currentValue]);
+        return $this->healthGoalsDao->update($goalId, ['current_value' => $currentValue]);
     }
 
     public function updateDeadline($goalId, $deadline) {
-        $goal = $this->dao->getById($goalId);
+        $goal = $this->healthGoalsDao->getById($goalId);
         if (!$goal) {
             throw new Exception("Health goal not found.");
         }
 
-        return $this->dao->update($goalId, ['deadline' => $deadline]);
+        return $this->healthGoalsDao->update($goalId, ['deadline' => $deadline]);
     }
 
     public function getHealthGoalById($id) {
-        return $this->dao->getById($id);
+        return $this->healthGoalsDao->getById($id);
     }
 
     public function getHealthGoalsByUserId($userId) {
-        return $this->dao->getByUserId($userId);
+        return $this->healthGoalsDao->getByUserId($userId);
     }
 
     public function calculateProgress($goalId) {
-        $goal = $this->dao->getById($goalId);
+        $goal = $this->healthGoalsDao->getById($goalId);
         if (!$goal) {
             throw new Exception("Health goal not found.");
         }
@@ -81,9 +85,62 @@ class HealthGoalsService extends BaseService {
     }
 
     public function checkGoalCompletion($goalId) {
-        $goal = $this->dao->getById($goalId);
+        $goal = $this->healthGoalsDao->getById($goalId);
         if ($goal['current_value'] >= $goal['target_value']) {
-            $this->dao->update($goalId, ['status' => 'Completed']);
+            $this->healthGoalsDao->update($goalId, ['status' => 'Completed']);
+        }
+    }
+
+    public function getAllHealthGoals() {
+        try {
+            $query = "SELECT hg.*, u.username 
+                     FROM healthgoals hg 
+                     LEFT JOIN users u ON hg.user_id = u.id";
+            return $this->healthGoalsDao->query($query);
+        } catch (Exception $e) {
+            error_log("Error in getAllHealthGoals: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function updateHealthGoal($id, $data) {
+        try {
+            $goal = $this->healthGoalsDao->getById($id);
+            if (!$goal) {
+                return null;
+            }
+
+            // Validate required fields
+            if (empty($data['goal_type']) || empty($data['target_value']) || 
+                !isset($data['current_value']) || empty($data['deadline'])) {
+                throw new Exception("Missing required fields: goal_type, target_value, current_value, or deadline.");
+            }
+
+            // Update the goal
+            $result = $this->healthGoalsDao->update($id, $data);
+            if (!$result) {
+                throw new Exception("Failed to update health goal.");
+            }
+
+            // Return the updated goal
+            return $this->healthGoalsDao->getById($id);
+        } catch (Exception $e) {
+            error_log("Error in updateHealthGoal: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function deleteHealthGoal($id) {
+        try {
+            $goal = $this->healthGoalsDao->getById($id);
+            if (!$goal) {
+                return false;
+            }
+
+            return $this->healthGoalsDao->delete($id);
+        } catch (Exception $e) {
+            error_log("Error in deleteHealthGoal: " . $e->getMessage());
+            throw $e;
         }
     }
 }

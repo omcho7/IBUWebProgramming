@@ -4,7 +4,7 @@ require_once __DIR__ . '/../dao/BaseDao.php';
 class BaseService {
     protected $dao;
     
-    public function __construct($dao) {
+    public function __construct($dao = null) {
         $this->dao = $dao;
     }
     

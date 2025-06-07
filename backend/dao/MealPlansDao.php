@@ -19,5 +19,22 @@ class MealPlansDao extends BaseDao {
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
+    public function getMealPlanById($id) {
+        $query = "SELECT mp.*, u.username 
+                 FROM mealplans mp 
+                 LEFT JOIN users u ON mp.user_id = u.id 
+                 WHERE mp.id = :id";
+        $stmt = $this->connection->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+
+    public function deleteMealPlan($id) {
+        $stmt = $this->connection->prepare("DELETE FROM mealplans WHERE id = :id");
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
+    }
 }
 ?>

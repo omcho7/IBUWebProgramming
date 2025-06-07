@@ -19,9 +19,15 @@ class BaseDao {
 
     
     public function getAll() {
-        $stmt = $this->connection->prepare("SELECT * FROM " . $this->table);
-        $stmt->execute();
-        return $stmt->fetchAll();
+        try {
+            $query = "SELECT * FROM " . $this->table;
+            $stmt = $this->connection->prepare($query);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error in getAll: " . $e->getMessage());
+            throw $e;
+        }
     }
 
     public function getById($id) {
@@ -81,5 +87,15 @@ class BaseDao {
             return false;
         }
     }
-  
+
+    public function query($sql) {
+        try {
+            $stmt = $this->connection->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error in query: " . $e->getMessage());
+            throw $e;
+        }
+    }
 }

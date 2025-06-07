@@ -88,16 +88,54 @@ Flight::route('POST /backend/appointments', function() use ($appointmentsService
  * )
  */
 Flight::route('PUT /backend/appointments/@id/status', function($id) use ($appointmentsService) {
-    // Only nutritionists can update appointment status
-    Flight::auth_middleware()->authorizeRole(Roles::NUTRITIONIST);
-    
-    $data = Flight::request()->data->getData();
-    
     try {
+        $data = Flight::request()->data->getData();
         $appointment = $appointmentsService->updateAppointmentStatus($id, $data['status']);
-        Flight::json($appointment);
+        Flight::json([
+            'success' => true,
+            'message' => 'Appointment status updated successfully'
+        ]);
     } catch (Exception $e) {
-        Flight::json(['error' => $e->getMessage()], 400);
+        Flight::json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 400);
+    }
+});
+
+/**
+ * @OA\Delete(
+ *     path="/backend/appointments/{id}",
+ *     tags={"Appointments"},
+ *     summary="Delete an appointment",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="integer", example=1)
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Appointment deleted successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Forbidden - only nutritionists can delete appointments"
+ *     )
+ * )
+ */
+Flight::route('DELETE /backend/appointments/@id', function($id) use ($appointmentsService) {
+    try {
+        $result = $appointmentsService->deleteAppointment($id);
+        Flight::json([
+            'success' => true,
+            'message' => 'Appointment deleted successfully'
+        ]);
+    } catch (Exception $e) {
+        Flight::json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 400);
     }
 });
 
@@ -123,26 +161,94 @@ Flight::route('PUT /backend/appointments/@id/status', function($id) use ($appoin
  * )
  */
 Flight::route('GET /backend/appointments/user/@userId', function($userId) use ($appointmentsService) {
-    // Both clients and nutritionists can view appointments
-    Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
-    
-    $currentUser = Flight::get('user');
-    
-    if ($currentUser['role'] === Roles::CLIENT && $currentUser['id'] != $userId) {
-        Flight::halt(403, json_encode([
-            'error' => 'You can only view your own appointments'
-        ]));
-    }
-    
-    if ($currentUser['role'] === Roles::NUTRITIONIST) {
+    try {
+        // Both clients and nutritionists can view appointments
+        Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
+        
+        $currentUser = Flight::get('user');
+        $decoded = Flight::get('decoded_token');
+        
+        if (!$currentUser && !$decoded) {
+            Flight::json([
+                'success' => false,
+                'error' => 'User not authenticated'
+            ], 401);
+            return;
+        }
+
+        // Get user data from either direct object, nested user property, or decoded token
+        $userData = null;
+        if (is_object($currentUser)) {
+            $userData = isset($currentUser->user) ? $currentUser->user : $currentUser;
+        } elseif (is_array($currentUser)) {
+            $userData = isset($currentUser['user']) ? $currentUser['user'] : $currentUser;
+        } elseif ($decoded && isset($decoded->user)) {
+            $userData = $decoded->user;
+        }
+
+        if (!$userData || !isset($userData->role)) {
+            Flight::json([
+                'success' => false,
+                'error' => 'Invalid user data structure',
+                'debug' => [
+                    'current_user' => $currentUser,
+                    'decoded_token' => $decoded
+                ]
+            ], 401);
+            return;
+        }
+        
+        // Clients can only view their own appointments
+        if ($userData->role === Roles::CLIENT && $userData->id != $userId) {
+            Flight::json([
+                'success' => false,
+                'error' => 'You can only view your own appointments'
+            ], 403);
+            return;
+        }
+        
         $appointments = $appointmentsService->getAppointmentsByUserId($userId);
-        $filteredAppointments = array_filter($appointments, function($appt) use ($currentUser) {
-            return $appt['nutritionist_id'] == $currentUser['id'];
-        });
-        Flight::json(array_values($filteredAppointments));
-        return;
+        Flight::json([
+            'success' => true,
+            'data' => $appointments || [] // Return empty array if null
+        ]);
+    } catch (Exception $e) {
+        error_log("Error in /backend/appointments/user: " . $e->getMessage());
+        Flight::json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 500);
     }
-    
-    Flight::json($appointmentsService->getAppointmentsByUserId($userId));
 });
+
+/**
+ * @OA\Get(
+ *     path="/backend/appointments",
+ *     tags={"Appointments"},
+ *     summary="Get all appointments",
+ *     @OA\Response(
+ *         response=200,
+ *         description="List of appointments"
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Forbidden - only nutritionists can view all appointments"
+ *     )
+ * )
+ */
+Flight::route('GET /backend/appointments', function() {
+    $appointmentService = new AppointmentsService();
+    try {
+        $appointments = $appointmentService->getAllAppointments();
+        Flight::json([
+            'success' => true,
+            'data' => $appointments
+        ]);
+    } catch (Exception $e) {
+        Flight::json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}, true);
 ?>

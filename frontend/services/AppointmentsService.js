@@ -130,7 +130,7 @@ const AppointmentsService = {
     },
 
     updateStatus: function(id, status, callback, error_callback) {
-        RestClient.patch(`appointments/${id}/status`, { status }, callback, error_callback);
+        RestClient.put(`appointments/${id}/status`, { status }, callback, error_callback);
     }
 };
 

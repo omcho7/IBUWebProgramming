@@ -52,10 +52,19 @@ class UserService extends BaseService {
         return $this->dao->update($user['id'], ['password' => $hashedPassword]);
     }
 
+    public function deleteClient($id) {
+        try {
+            if ($this->dao->deleteUser($id)) {
+                return ['success' => true, 'message' => 'Client deleted successfully'];
+            }
+            return ['success' => false, 'message' => 'Failed to delete client'];
+        } catch (Exception $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
     
     public function isAuthorized($user, $requiredRole) {
         return $user['role'] === $requiredRole;
     }
-    
 }
 ?>

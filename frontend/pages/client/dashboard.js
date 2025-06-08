@@ -117,7 +117,7 @@ function updateAppointmentsCard(appointments) {
 
 // Update meal plans card
 function updateMealPlansCard(mealPlans) {
-    const card = document.querySelector('.clientCards:nth-child(2) .card-text');
+    const card = document.querySelector('.col-md-4:nth-child(2) .card-text');
     if (!card) {
         console.error('Meal plans card not found');
         return;
@@ -128,31 +128,53 @@ function updateMealPlansCard(mealPlans) {
         return;
     }
     
-    const currentPlan = mealPlans[0]; // Get the most recent plan
-    const meals = typeof currentPlan.meals === 'string' ? JSON.parse(currentPlan.meals) : currentPlan.meals;
-    
-    card.innerHTML = `
-        <div class="meal-plan-stats">
-            <div class="current-plan mb-2">
-                <strong>Current Plan:</strong> ${currentPlan.title}
+    try {
+        const currentPlan = mealPlans[0]; // Get the most recent plan
+        if (!currentPlan) {
+            card.textContent = 'No meal plans assigned yet.';
+            return;
+        }
+
+        // Handle meals data - it could be a string (JSON) or already an object
+        let meals = currentPlan.meals;
+        if (typeof meals === 'string') {
+            try {
+                meals = JSON.parse(meals);
+            } catch (e) {
+                console.error('Error parsing meals JSON:', e);
+                meals = {};
+            }
+        }
+        
+        // Ensure meals is an object with default values
+        meals = meals || {};
+        
+        card.innerHTML = `
+            <div class="meal-plan-stats">
+                <div class="current-plan mb-2">
+                    <strong>Current Plan:</strong> ${currentPlan.title || 'Untitled Plan'}
+                </div>
+                <div class="meals-preview">
+                    <small>
+                        <div>🍳 ${meals.Breakfast || 'Not set'}</div>
+                        <div>🍽️ ${meals.Lunch || 'Not set'}</div>
+                        <div>🌙 ${meals.Dinner || 'Not set'}</div>
+                    </small>
+                </div>
+                <div class="text-center mt-2">
+                    <small>Total Plans: ${mealPlans.length}</small>
+                </div>
             </div>
-            <div class="meals-preview">
-                <small>
-                    <div>🍳 ${meals.Breakfast || 'Not set'}</div>
-                    <div>🍽️ ${meals.Lunch || 'Not set'}</div>
-                    <div>🌙 ${meals.Dinner || 'Not set'}</div>
-                </small>
-            </div>
-            <div class="text-center mt-2">
-                <small>Total Plans: ${mealPlans.length}</small>
-            </div>
-        </div>
-    `;
+        `;
+    } catch (error) {
+        console.error('Error updating meal plans card:', error);
+        card.textContent = 'Error loading meal plans.';
+    }
 }
 
 // Update health goals card
 function updateHealthGoalsCard(goals) {
-    const card = document.querySelector('.clientCards:nth-child(3) .card-text');
+    const card = document.querySelector('.col-md-4:nth-child(3) .card-text');
     if (!card) {
         console.error('Health goals card not found');
         return;

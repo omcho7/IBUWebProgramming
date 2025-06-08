@@ -320,17 +320,25 @@ Flight::route('GET /backend/health-goals/user/@userId', function($userId) use ($
             ], 403);
             return;
         }
-
-        $goals = $healthGoalsService->getHealthGoalsByUserId($userId);
+        
+        $healthGoals = $healthGoalsService->getHealthGoalsByUserId($userId);
+        error_log("Health goals for user $userId: " . print_r($healthGoals, true));
+        
+        // Ensure we return an array
+        if (!$healthGoals) {
+            $healthGoals = [];
+        }
+        
         Flight::json([
             'success' => true,
-            'data' => $goals
+            'data' => $healthGoals
         ]);
     } catch (Exception $e) {
+        error_log("Error in /backend/health-goals/user: " . $e->getMessage());
         Flight::json([
             'success' => false,
             'error' => $e->getMessage()
-        ], 400);
+        ], 500);
     }
 });
 

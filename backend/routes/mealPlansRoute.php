@@ -158,7 +158,7 @@ Flight::route('GET /backend/meal-plans/client/@clientId', function($clientId) us
             ], 401);
             return;
         }
-
+        
         // Clients can only view their own meal plans
         if ($currentUser->role === Roles::CLIENT && $currentUser->id != $clientId) {
             Flight::json([
@@ -167,17 +167,25 @@ Flight::route('GET /backend/meal-plans/client/@clientId', function($clientId) us
             ], 403);
             return;
         }
-
+        
         $mealPlans = $mealPlansService->getMealPlansByClientId($clientId);
+        error_log("Meal plans for client $clientId: " . print_r($mealPlans, true));
+        
+        // Ensure we return an array
+        if (!$mealPlans) {
+            $mealPlans = [];
+        }
+        
         Flight::json([
             'success' => true,
             'data' => $mealPlans
         ]);
     } catch (Exception $e) {
+        error_log("Error in /backend/meal-plans/client: " . $e->getMessage());
         Flight::json([
             'success' => false,
             'error' => $e->getMessage()
-        ], 400);
+        ], 500);
     }
 });
 

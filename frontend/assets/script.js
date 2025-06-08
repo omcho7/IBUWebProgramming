@@ -1,18 +1,16 @@
 const pageCache = {};
 const pageScripts = {
- // home: "pages/home.js",
-  about: "pages/about.js",
-  contact: "pages/contact.js",
+  // home: "pages/home.js",
+  // about: "pages/about.js",  // Removed since we don't need it
+  // contact: "pages/contact.js",  // Removed since we don't need it
   login: "pages/login.js",
   signup: "pages/signup.js",
   "client/Cdashboard": "pages/client/dashboard.js",
   "client/Cform": "pages/client/Cform.js",
   "client/Cform2": "pages/client/Cform2.js",
   "admin/Adashboard": "pages/admin/Adashboard.js"
-  // Add more as needed
 };
 
-// Page initializers map
 const pageInitializers = {
   "client/Cdashboard": "initDashboard",
   "login": "initLogin",
@@ -21,7 +19,6 @@ const pageInitializers = {
   "client/Cform2": "initAllergiesForm",
   "admin/Adashboard": "initAdminDashboard"
   
-  // Add more initializers as needed
 };
 
 function navigate(page) {

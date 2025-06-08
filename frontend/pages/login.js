@@ -43,20 +43,50 @@ function initLogin() {
                 console.log("Login response:", result);
                 if (result.success) {
                     console.log("Login successful, token:", result.data.token);
-                    localStorage.setItem("user_token", result.data.token);
                     
-                    const user = Utils.parseJwt(result.data.token);
-                    console.log("Decoded user:", user);
-                    
-                    // Get role from nested user object
-                    const role = user.user ? user.user.role : user.role;
-                    console.log("User role:", role);
-                    
-                    const redirectPath = role === 'Nutritionist' 
-                        ? 'admin/Adashboard' 
-                        : 'client/Cdashboard';
-                    console.log("Attempting redirect to:", redirectPath);
-                    navigate(redirectPath);
+                    try {
+                        // Parse the token first to verify it's valid
+                        const decodedToken = Utils.parseJwt(result.data.token);
+                        console.log("Decoded token:", decodedToken);
+                        
+                        if (!decodedToken || !decodedToken.user || !decodedToken.user.role) {
+                            console.error("Invalid token structure - missing role");
+                            showError('Invalid authentication data');
+                            return;
+                        }
+                        
+                        // Store the token
+                        localStorage.setItem("user_token", result.data.token);
+                        
+                        // Store user data from the token to ensure consistency
+                        localStorage.setItem("user_data", JSON.stringify(decodedToken.user));
+                        
+                        // Verify the data was stored correctly
+                        const storedToken = localStorage.getItem('user_token');
+                        const storedUserData = localStorage.getItem('user_data');
+                        
+                        if (!storedToken || !storedUserData) {
+                            console.error("Failed to store authentication data");
+                            showError('Failed to save login data');
+                            return;
+                        }
+                        
+                        const redirectPath = decodedToken.user.role === 'Nutritionist' 
+                            ? 'admin/Adashboard' 
+                            : 'client/Cdashboard';
+                        console.log("Redirecting to:", redirectPath);
+                        
+                        // Use a longer delay to ensure data is stored
+                        setTimeout(() => {
+                            navigate(redirectPath);
+                        }, 500);
+                    } catch (error) {
+                        console.error("Error processing login data:", error);
+                        showError('Error processing login data');
+                        // Clear any partial data
+                        localStorage.removeItem('user_token');
+                        localStorage.removeItem('user_data');
+                    }
                 } else {
                     showError(result.message || 'Login failed');
                 }

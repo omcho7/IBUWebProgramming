@@ -190,7 +190,7 @@ const RegisterService = {
         
         // Use regular AJAX instead of RestClient for more control
         $.ajax({
-            url: Constants.PROJECT_BASE_URL + "backend/auth/register",
+            url: Constants.PROJECT_BASE_URL + "auth/register",
             type: "POST",
             data: userData,
             success: function(response) {
@@ -274,7 +274,7 @@ const RegisterService = {
             
             // Use direct AJAX call instead of form submission
             $.ajax({
-                url: Constants.PROJECT_BASE_URL + "backend/health-goals",
+                url: Constants.PROJECT_BASE_URL + "health-goals",
                 type: "POST",
                 contentType: "application/x-www-form-urlencoded",
                 data: {
@@ -322,13 +322,23 @@ const RegisterService = {
         
         // Use regular AJAX to avoid content-type issues
         $.ajax({
-            url: Constants.PROJECT_BASE_URL + "backend/auth/login",
+            url: Constants.PROJECT_BASE_URL + "auth/login",
             type: "POST",
             data: loginData,
             success: function(result) {
                 console.log('Login response:', result);
                 if (result && result.success) {
                     localStorage.setItem("user_token", result.data.token);
+                    // Store the user data separately
+                    if (result.data.user) {
+                        localStorage.setItem("user_data", JSON.stringify(result.data.user));
+                    } else {
+                        // If user data is not in the response, extract it from the token
+                        const decoded = Utils.parseJwt(result.data.token);
+                        if (decoded && decoded.user) {
+                            localStorage.setItem("user_data", JSON.stringify(decoded.user));
+                        }
+                    }
                     toastr.success('Registration successful!');
                     // Use a small delay to ensure token is saved before navigation
                     setTimeout(function() {

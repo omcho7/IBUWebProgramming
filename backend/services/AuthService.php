@@ -74,11 +74,25 @@ class AuthService extends BaseService {
             }
 
             unset($db_user['password']);
-            $jwt_payload = [
-                'user' => $db_user,
-                'iat' => time(),
-                'exp' => time() + (60 * 60 * 24) 
+            
+            // Create properly nested user data structure
+            $user_data = [
+                'id' => $db_user['id'],
+                'username' => $db_user['username'],
+                'email' => $db_user['email'],
+                'role' => $db_user['role']
             ];
+
+            error_log("User data before token creation: " . print_r($user_data, true));
+
+            $jwt_payload = [
+                'user' => $user_data,  // Nest user data under 'user' key
+                'iat' => time(),
+                'exp' => time() + (60 * 60 * 24) // 24 hours expiration
+            ];
+
+            error_log("JWT payload before encoding: " . print_r($jwt_payload, true));
+            error_log("Using JWT secret: " . substr(Config::JWT_SECRET(), 0, 5) . "...");
 
             $token = JWT::encode(
                 $jwt_payload,
@@ -86,12 +100,27 @@ class AuthService extends BaseService {
                 'HS256'
             );
 
+            error_log("Generated token: " . $token);
+            
+            // Verify the token can be decoded
+            try {
+                $decoded = JWT::decode($token, new Key(Config::JWT_SECRET(), 'HS256'));
+                error_log("Token verification successful. Decoded data: " . print_r($decoded, true));
+            } catch (Exception $e) {
+                error_log("Token verification failed after generation: " . $e->getMessage());
+                throw new Exception("Token generation failed: " . $e->getMessage());
+            }
+
             return [
                 'success' => true,
-                'data' => array_merge($db_user, ['token' => $token])
+                'data' => [
+                    'token' => $token,
+                    'user' => $user_data
+                ]
             ];
 
         } catch (Exception $e) {
+            error_log("Login error: " . $e->getMessage());
             return [
                 'success' => false,
                 'error' => $e->getMessage()

@@ -94,5 +94,41 @@ class MealPlansService extends BaseService {
             throw $e;
         }
     }
+
+    public function getMealPlansByClientId($clientId) {
+        try {
+            error_log("Getting meal plans for client ID: " . $clientId);
+            
+            if (!$clientId) {
+                error_log("Invalid client ID provided");
+                throw new Exception("Invalid client ID");
+            }
+            
+            $mealPlans = $this->mealPlansDao->getByUserId($clientId);
+            error_log("Retrieved meal plans: " . print_r($mealPlans, true));
+            
+            if (!$mealPlans) {
+                error_log("No meal plans found for client ID: " . $clientId);
+                return [];
+            }
+            
+            // Decode meals JSON for each meal plan
+            foreach ($mealPlans as &$mealPlan) {
+                if (isset($mealPlan['meals'])) {
+                    try {
+                        $mealPlan['meals'] = json_decode($mealPlan['meals'], true) ?: [];
+                    } catch (Exception $e) {
+                        error_log("Error decoding meals JSON: " . $e->getMessage());
+                        $mealPlan['meals'] = [];
+                    }
+                }
+            }
+            
+            return $mealPlans;
+        } catch (Exception $e) {
+            error_log("Error getting meal plans by client ID: " . $e->getMessage());
+            throw $e;
+        }
+    }
 }
 ?>

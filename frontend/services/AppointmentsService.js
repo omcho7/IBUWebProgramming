@@ -14,40 +14,48 @@ const AppointmentsService = {
     
     // Get appointments by user ID
     getByUserId: function(userId, callback, errorCallback) {
-        // Try to get from localStorage cache first (if cache isn't expired)
-        const cacheKey = `appointments_${userId}`;
-        const cachedData = localStorage.getItem(cacheKey);
-        
-        if (cachedData) {
-            try {
-                const cache = JSON.parse(cachedData);
-                // Check if cache is still valid (5 minutes)
-                if (cache.timestamp && (Date.now() - cache.timestamp < 5 * 60 * 1000)) {
-                    console.log('Using cached appointments data');
-                    callback(cache.data);
-                    return;
-                } else {
-                    // Cache expired
-                    localStorage.removeItem(cacheKey);
-                }
-            } catch (e) {
-                console.error('Error parsing cached appointments data:', e);
-                localStorage.removeItem(cacheKey);
-            }
+        const token = localStorage.getItem('user_token');
+        if (!token) {
+            errorCallback('No token found');
+            return;
         }
-        
-        RestClient.get(`appointments/user/${userId}`, function(response) {
-            // Cache the response for 5 minutes
-            if (response && response.success) {
-                const cacheData = {
-                    timestamp: Date.now(),
-                    data: response
-                };
-                localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+
+        // Parse token to check structure
+        try {
+            const tokenData = JSON.parse(atob(token.split('.')[1]));
+            console.log('Token data:', tokenData);
+            if (!tokenData.user || !tokenData.user.role) {
+                errorCallback('Invalid token structure');
+                return;
             }
-            
-            if (callback) callback(response);
-        }, errorCallback);
+        } catch (e) {
+            console.error('Error parsing token:', e);
+            errorCallback('Invalid token format');
+            return;
+        }
+
+        $.ajax({
+            url: `/OmarOsmanovic/IBUWebProgramming/backend/appointments/user/${userId}`,
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                if (response.success) {
+                    callback(response.data);
+                } else {
+                    errorCallback(response.error || 'Failed to load appointments');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Appointments error:', {
+                    status: xhr.status,
+                    error: error,
+                    response: xhr.responseText
+                });
+                errorCallback(error || 'Failed to load appointments');
+            }
+        });
     },
     
     // Get appointments by nutritionist ID

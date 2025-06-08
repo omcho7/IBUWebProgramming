@@ -61,18 +61,34 @@ function loadPageScript(page) {
     script.type = "module";
     
     // For ES modules, we need to handle initialization differently
-    if (page === "admin/Adashboard") {
+    if (page === "admin/Adashboard" || page === "client/Cdashboard") {
       script.onload = async function() {
         try {
           // Use proper relative path for module import
-          const module = await import('../../frontend/pages/admin/Adashboard.js');
-          if (module.initAdminDashboard) {
-            module.initAdminDashboard();
+          const module = await import(`../../frontend/${pageScripts[page]}`);
+          const initializerName = pageInitializers[page];
+          
+          // Verify token and user data before initialization
+          const token = localStorage.getItem('user_token');
+          const userData = localStorage.getItem('user_data');
+          
+          if (!token || !userData) {
+            console.error('Missing authentication data');
+            navigate('login');
+            return;
+          }
+          
+          if (module[initializerName]) {
+            module[initializerName]();
           } else {
-            console.error(`Module ${pageScripts[page]} does not export initAdminDashboard`);
+            console.error(`Module ${pageScripts[page]} does not export ${initializerName}`);
           }
         } catch (error) {
           console.error(`Error loading module ${pageScripts[page]}:`, error);
+          // Don't clear localStorage on module load error
+          if (error.message.includes('token')) {
+            navigate('login');
+          }
         }
       };
     } else {

@@ -1,86 +1,79 @@
 import { default as RestClient } from '../utils/rest-client.js';
 import Constants from '../utils/constants.js';
 
-class HealthGoalsService {
-    async getAllHealthGoals() {
-        try {
-            const response = await RestClient.get('health-goals');
-            return response;
-        } catch (error) {
-            console.error('Error getting health goals:', error);
-            throw error;
-        }
-    }
+const HealthGoalsService = {
+    getAllHealthGoals: function(callback, errorCallback) {
+        RestClient.get('health-goals', callback, errorCallback);
+    },
 
-    async getHealthGoalById(id) {
-        try {
-            const response = await RestClient.get(`health-goals/${id}`);
-            return response;
-        } catch (error) {
-            console.error('Error getting health goal:', error);
-            throw error;
-        }
-    }
+    getHealthGoalById: function(id, callback, errorCallback) {
+        RestClient.get(`health-goals/${id}`, callback, errorCallback);
+    },
 
-    async createHealthGoal(data) {
-        try {
-            const response = await RestClient.post('health-goals', data);
-            return response;
-        } catch (error) {
-            console.error('Error creating health goal:', error);
-            throw error;
-        }
-    }
+    createHealthGoal: function(data, callback, errorCallback) {
+        RestClient.post('health-goals', data, callback, errorCallback);
+    },
 
-    async updateHealthGoal(id, data) {
-        try {
-            const response = await RestClient.put(`health-goals/${id}`, data);
-            return response;
-        } catch (error) {
-            console.error('Error updating health goal:', error);
-            throw error;
-        }
-    }
+    updateHealthGoal: function(id, data, callback, errorCallback) {
+        RestClient.put(`health-goals/${id}`, data, callback, errorCallback);
+    },
 
-    async deleteHealthGoal(id) {
-        try {
-            const response = await RestClient.delete(`health-goals/${id}`);
-            return response;
-        } catch (error) {
-            console.error('Error deleting health goal:', error);
-            throw error;
-        }
-    }
+    deleteHealthGoal: function(id, callback, errorCallback) {
+        RestClient.delete(`health-goals/${id}`, callback, errorCallback);
+    },
 
-    async getByUserId(userId) {
-        try {
-            const response = await RestClient.get(`health-goals/user/${userId}`);
-            return response;
-        } catch (error) {
-            console.error('Error getting health goals by user:', error);
-            throw error;
+    getByUserId: function(userId, callback, errorCallback) {
+        const token = localStorage.getItem('user_token');
+        if (!token) {
+            errorCallback('No token found');
+            return;
         }
-    }
 
-    async updateProgress(id, progress) {
+        // Parse token to check structure
         try {
-            const response = await RestClient.patch(`health-goals/${id}/progress`, { progress });
-            return response;
-        } catch (error) {
-            console.error('Error updating progress:', error);
-            throw error;
+            const tokenData = JSON.parse(atob(token.split('.')[1]));
+            console.log('Token data:', tokenData);
+            if (!tokenData.user || !tokenData.user.role) {
+                errorCallback('Invalid token structure');
+                return;
+            }
+        } catch (e) {
+            console.error('Error parsing token:', e);
+            errorCallback('Invalid token format');
+            return;
         }
-    }
 
-    async updateDeadline(goalId, deadline) {
-        try {
-            const response = await RestClient.put(`health-goals/${goalId}/deadline`, { deadline });
-            return response;
-        } catch (error) {
-            console.error('Error updating deadline:', error);
-            throw error;
-        }
-    }
-}
+        $.ajax({
+            url: `/OmarOsmanovic/IBUWebProgramming/backend/health-goals/user/${userId}`,
+            type: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                if (response.success) {
+                    callback(response.data);
+                } else {
+                    errorCallback(response.error || 'Failed to load health goals');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Health goals error:', {
+                    status: xhr.status,
+                    error: error,
+                    response: xhr.responseText
+                });
+                errorCallback(error || 'Failed to load health goals');
+            }
+        });
+    },
 
-export default new HealthGoalsService(); 
+    updateProgress: function(id, progress, callback, errorCallback) {
+        RestClient.put(`health-goals/${id}/progress`, { progress }, callback, errorCallback);
+    },
+
+    updateDeadline: function(goalId, deadline, callback, errorCallback) {
+        RestClient.put(`health-goals/${goalId}/deadline`, { deadline }, callback, errorCallback);
+    }
+};
+
+export default HealthGoalsService; 

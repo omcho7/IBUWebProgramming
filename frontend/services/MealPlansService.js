@@ -1,5 +1,6 @@
 import RestClient from '../utils/rest-client.js';
 import Constants from '../utils/constants.js';
+import Utils from '../utils/utils.js';
 
 const MealPlansService = {
     // Get all meal plans
@@ -14,40 +15,56 @@ const MealPlansService = {
     
     // Get meal plans by user ID
     getByUserId: function(userId, callback, errorCallback) {
-        // Try to get from localStorage cache first (if cache isn't expired)
-        const cacheKey = `meal_plans_${userId}`;
-        const cachedData = localStorage.getItem(cacheKey);
+        // Get token and user data
+        const token = localStorage.getItem('user_token');
+        const userDataString = localStorage.getItem('user_data');
         
-        if (cachedData) {
+        if (!token) {
+            errorCallback('No token found');
+            return;
+        }
+
+        // First try to get user data from localStorage
+        let userData = null;
+        if (userDataString) {
             try {
-                const cache = JSON.parse(cachedData);
-                // Check if cache is still valid (5 minutes)
-                if (cache.timestamp && (Date.now() - cache.timestamp < 5 * 60 * 1000)) {
-                    console.log('Using cached meal plans data');
-                    callback(cache.data);
-                    return;
-                } else {
-                    // Cache expired
-                    localStorage.removeItem(cacheKey);
-                }
+                userData = JSON.parse(userDataString);
             } catch (e) {
-                console.error('Error parsing cached meal plans data:', e);
-                localStorage.removeItem(cacheKey);
+                console.error('Error parsing user data:', e);
             }
         }
-        
-        RestClient.get(`meal-plans/user/${userId}`, function(response) {
-            // Cache the response for 5 minutes
-            if (response && response.success) {
-                const cacheData = {
-                    timestamp: Date.now(),
-                    data: response
-                };
-                localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+
+        // If no user data in localStorage, try to get it from token
+        if (!userData) {
+            try {
+                const decodedToken = Utils.parseJwt(token);
+                if (decodedToken && decodedToken.user) {
+                    userData = decodedToken.user;
+                    // Store user data in localStorage for future use
+                    localStorage.setItem('user_data', JSON.stringify(userData));
+                }
+            } catch (e) {
+                console.error('Error parsing token:', e);
             }
-            
-            if (callback) callback(response);
-        }, errorCallback);
+        }
+
+        // Verify user data and role
+        if (!userData || !userData.role) {
+            errorCallback('Invalid user data or missing role');
+            return;
+        }
+
+        // Use RestClient instead of direct AJAX call
+        RestClient.get(`meal-plans/client/${userId}`, function(response) {
+            if (response.success) {
+                callback(response.data);
+            } else {
+                errorCallback(response.error || 'Failed to load meal plans');
+            }
+        }, function(error) {
+            console.error('Meal plans error:', error);
+            errorCallback(error || 'Failed to load meal plans');
+        });
     },
     
     // Get meal plans by nutritionist ID
@@ -127,10 +144,6 @@ const MealPlansService = {
             
             if (callback) callback(response);
         }, errorCallback);
-    },
-
-    getMealPlansByClientId: function(clientId, callback, errorCallback) {
-        RestClient.get('backend/meal-plans/client/' + clientId, callback, errorCallback);
     },
 
     createMealPlan: function(mealPlan, callback, errorCallback) {

@@ -5,30 +5,33 @@ use Firebase\JWT\Key;
 class AuthMiddleware {
     public function verifyToken($token) {
         try {
-            $decoded = JWT::decode($token, new Key(Config::JWT_SECRET(), 'HS256'));
+            error_log("Verifying token: " . substr($token, 0, 20) . "...");
             
-            // Double verification
+            // Remove 'Bearer ' prefix if present
+            if (strpos($token, 'Bearer ') === 0) {
+                $token = substr($token, 7);
+            }
+            
+            $decoded = JWT::decode($token, new Key(Config::JWT_SECRET(), 'HS256'));
+            error_log("Decoded token: " . print_r($decoded, true));
+            
+            // Ensure we have user data with role
             if (!isset($decoded->user) || !isset($decoded->user->role)) {
-                throw new Exception("Invalid token structure");
+                throw new Exception("Invalid token structure - missing user role");
             }
 
-            // Store the entire decoded token and user data
+            // Store the decoded token and user data
             Flight::set('decoded_token', $decoded);
             Flight::set('user', $decoded->user);
             
             error_log("Token verified successfully for user: " . $decoded->user->email);
-            error_log("Decoded token data: " . print_r($decoded, true));
-            error_log("User data: " . print_r($decoded->user, true));
-            
+            error_log("Stored user data: " . print_r($decoded->user, true));
             return true;
         } catch (Exception $e) {
             error_log("Token verification failed: " . $e->getMessage());
             Flight::halt(401, json_encode([
                 'success' => false,
-                'error' => $e->getMessage(),
-                'debug' => [
-                    'token' => $token
-                ]
+                'error' => $e->getMessage()
             ]));
             return false;
         }
@@ -38,79 +41,19 @@ class AuthMiddleware {
         $user = Flight::get('user');
         $decoded = Flight::get('decoded_token');
         
-        error_log("Authorizing role. Required: $requiredRole | User data: " . print_r($user, true));
-        error_log("Decoded token data: " . print_r($decoded, true));
-
-        // Get the effective role from either source
-        $effectiveRole = null;
+        error_log("Authorizing role. Required: $requiredRole");
+        error_log("User data from Flight: " . print_r($user, true));
+        error_log("Decoded token from Flight: " . print_r($decoded, true));
+        
+        // Get role from either source
+        $role = null;
         if ($user && isset($user->role)) {
-            $effectiveRole = $user->role;
+            $role = $user->role;
         } elseif ($decoded && isset($decoded->user->role)) {
-            $effectiveRole = $decoded->user->role;
-        }
-
-        if (!$effectiveRole) {
-            error_log("Critical: No role data available in token");
-            Flight::halt(403, json_encode([
-                'success' => false,
-                'error' => 'Role information missing in token',
-                'debug' => [
-                    'user_data' => $user,
-                    'decoded_token' => $decoded
-                ]
-            ]));
-            return false;
+            $role = $decoded->user->role;
         }
         
-        // Case-insensitive comparison
-        if (strtolower($effectiveRole) !== strtolower($requiredRole)) {
-            error_log("Role authorization failed. Has: $effectiveRole, Needs: $requiredRole");
-            Flight::halt(403, json_encode([
-                'success' => false,
-                'error' => 'Insufficient privileges',
-                'required_role' => $requiredRole,
-                'current_role' => $effectiveRole
-            ]));
-            return false;
-        }
-        
-        error_log("Role authorized successfully: $effectiveRole");
-        return true;
-    }
-
-    public function authorizeRoles($allowedRoles) {
-        $user = Flight::get('user');
-        $decoded = Flight::get('decoded_token');
-        
-        error_log("Authorizing role. Required: " . implode(', ', $allowedRoles) . " | User data: " . print_r($user, true));
-        error_log("Decoded token data: " . print_r($decoded, true));
-        
-        // Get the effective role from either the user object or the decoded token
-        $effectiveRole = null;
-        
-        // First try to get role from user object
-        if (is_object($user)) {
-            if (isset($user->role)) {
-                $effectiveRole = $user->role;
-            } elseif (isset($user->user) && isset($user->user->role)) {
-                $effectiveRole = $user->user->role;
-            }
-        } elseif (is_array($user)) {
-            if (isset($user['role'])) {
-                $effectiveRole = $user['role'];
-            } elseif (isset($user['user']) && isset($user['user']['role'])) {
-                $effectiveRole = $user['user']['role'];
-            }
-        }
-        
-        // If no role found in user object, try decoded token
-        if (!$effectiveRole && $decoded) {
-            if (isset($decoded->user->role)) {
-                $effectiveRole = $decoded->user->role;
-            }
-        }
-
-        if (!$effectiveRole) {
+        if (!$role) {
             error_log("Critical: No role data available in token");
             Flight::halt(401, json_encode([
                 'success' => false,
@@ -120,23 +63,84 @@ class AuthMiddleware {
                     'decoded_token' => $decoded
                 ]
             ]));
-            return;
+            return false;
         }
-
-        if (!in_array($effectiveRole, $allowedRoles)) {
-            error_log("Role authorization failed. User role: $effectiveRole, Allowed roles: " . implode(', ', $allowedRoles));
+        
+        if (strtolower($role) !== strtolower($requiredRole)) {
+            error_log("Role authorization failed. Has: $role, Needs: $requiredRole");
             Flight::halt(403, json_encode([
                 'success' => false,
-                'error' => 'Access denied: Insufficient permissions',
-                'debug' => [
-                    'user_role' => $effectiveRole,
-                    'allowed_roles' => $allowedRoles
-                ]
+                'error' => 'Insufficient privileges'
             ]));
-            return;
+            return false;
         }
+        
+        error_log("Role authorized successfully: $role");
+        return true;
+    }
 
-        error_log("Role authorized successfully: $effectiveRole");
+    public function authorizeRoles($allowedRoles) {
+        try {
+            // Get the token from the request header
+            $headers = getallheaders();
+            if (!isset($headers['Authorization'])) {
+                throw new Exception('No authorization header');
+            }
+
+            $token = $headers['Authorization'];
+            if (strpos($token, 'Bearer ') === 0) {
+                $token = substr($token, 7);
+            }
+
+            // Decode the token directly
+            $decoded = JWT::decode($token, new Key(Config::JWT_SECRET(), 'HS256'));
+            error_log("Direct token decode in authorizeRoles: " . print_r($decoded, true));
+
+            // Get role from decoded token
+            $role = null;
+            if (isset($decoded->user->role)) {
+                $role = $decoded->user->role;
+            }
+
+            error_log("Authorizing roles. Allowed: " . implode(', ', $allowedRoles));
+            error_log("Role from token: " . ($role ?? 'null'));
+            
+            if (!$role) {
+                error_log("Critical: No role data available in token");
+                Flight::halt(401, json_encode([
+                    'success' => false,
+                    'error' => 'No role data available in token',
+                    'debug' => [
+                        'decoded_token' => $decoded
+                    ]
+                ]));
+                return false;
+            }
+            
+            if (!in_array($role, $allowedRoles)) {
+                error_log("Role authorization failed. Has: $role, Allowed: " . implode(', ', $allowedRoles));
+                Flight::halt(403, json_encode([
+                    'success' => false,
+                    'error' => 'Insufficient privileges'
+                ]));
+                return false;
+            }
+            
+            // Store user data in Flight after successful authorization
+            Flight::set('user', $decoded->user);
+            Flight::set('decoded_token', $decoded);
+            
+            error_log("User data stored in Flight after authorization: " . print_r($decoded->user, true));
+            error_log("Role authorized successfully: $role");
+            return true;
+        } catch (Exception $e) {
+            error_log("Authorization error: " . $e->getMessage());
+            Flight::halt(401, json_encode([
+                'success' => false,
+                'error' => $e->getMessage()
+            ]));
+            return false;
+        }
     }
 
     public function authorizePermission($permission) {

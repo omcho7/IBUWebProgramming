@@ -120,6 +120,7 @@ Flight::route('DELETE /backend/meal-plans/@id', function($id) use ($mealPlansSer
  * @OA\Get(
  *     path="/backend/meal-plans/client/{clientId}",
  *     tags={"Meal Plans"},
+ *     security={{"ApiKey": {}}},
  *     summary="Get meal plans by client ID",
  *     @OA\Parameter(
  *         name="clientId",
@@ -136,16 +137,21 @@ Flight::route('DELETE /backend/meal-plans/@id', function($id) use ($mealPlansSer
  *         description="Forbidden - can only view your own meal plans or your clients' plans"
  *     )
  * )
+ * 
+ * 
+ * 
  */
+
+
 Flight::route('GET /backend/meal-plans/client/@clientId', function($clientId) use ($mealPlansService) {
     try {
         // Both clients and nutritionists can view meal plans
         Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
         
         $currentUser = Flight::get('user');
-        $decoded = Flight::get('decoded_token');
+        error_log("Current user from Flight: " . print_r($currentUser, true));
         
-        if (!$currentUser && !$decoded) {
+        if (!$currentUser) {
             Flight::json([
                 'success' => false,
                 'error' => 'User not authenticated'
@@ -153,48 +159,25 @@ Flight::route('GET /backend/meal-plans/client/@clientId', function($clientId) us
             return;
         }
 
-        // Get user data from either direct object, nested user property, or decoded token
-        $userData = null;
-        if (is_object($currentUser)) {
-            $userData = isset($currentUser->user) ? $currentUser->user : $currentUser;
-        } elseif (is_array($currentUser)) {
-            $userData = isset($currentUser['user']) ? $currentUser['user'] : $currentUser;
-        } elseif ($decoded && isset($decoded->user)) {
-            $userData = $decoded->user;
-        }
-
-        if (!$userData || !isset($userData->role)) {
-            Flight::json([
-                'success' => false,
-                'error' => 'Invalid user data structure',
-                'debug' => [
-                    'current_user' => $currentUser,
-                    'decoded_token' => $decoded
-                ]
-            ], 401);
-            return;
-        }
-        
         // Clients can only view their own meal plans
-        if ($userData->role === Roles::CLIENT && $userData->id != $clientId) {
+        if ($currentUser->role === Roles::CLIENT && $currentUser->id != $clientId) {
             Flight::json([
                 'success' => false,
                 'error' => 'You can only view your own meal plans'
             ], 403);
             return;
         }
-        
+
         $mealPlans = $mealPlansService->getMealPlansByClientId($clientId);
         Flight::json([
             'success' => true,
-            'data' => $mealPlans || [] // Return empty array if null
+            'data' => $mealPlans
         ]);
     } catch (Exception $e) {
-        error_log("Error in /backend/meal-plans/client: " . $e->getMessage());
         Flight::json([
             'success' => false,
             'error' => $e->getMessage()
-        ], 500);
+        ], 400);
     }
 });
 

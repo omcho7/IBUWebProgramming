@@ -70,7 +70,7 @@
   <div class="clientHero">
   <div class="row">
     <div class="col-md-12 text-center">
-      <h2>Welcome, [Client Name]!</h2>
+      <h2 id="welcome-message">Welcome!</h2>
       <p>
         Your health journey starts here. Check your stats and manage your
         profile.
@@ -82,7 +82,7 @@
       <div class="clientCards card text-center">
         <div class="card-body">
           <h5 class="card-title">📅 Appointments</h5>
-          <p class="card-text">You have 2 upcoming appointments.</p>
+          <p class="card-text">Loading appointments...</p>
         </div>
       </div>
     </div>
@@ -90,7 +90,7 @@
       <div class="clientCards card text-center">
         <div class="card-body">
           <h5 class="card-title">🥗 Meal Plans</h5>
-          <p class="card-text">Your current meal plan:</p>
+          <p class="card-text">Loading meal plans...</p>
         </div>
       </div>
     </div>
@@ -98,161 +98,16 @@
       <div class="clientCards card text-center">
         <div class="card-body">
           <h5 class="card-title">🎯 Health Goals</h5>
-          <p class="card-text">You have achieved 3 out of 5 health goals.</p>
+          <p class="card-text">Loading health goals...</p>
         </div>
       </div>
     </div>
   </div>
 </div>
-  <div class="row mt-5" style="display: flex; justify-content: center">
-    <div class="col-md-6">
-      <ul
-        class="nav nav-tabs"
-        id="myTab"
-        role="tablist"
-        style="display: flex; justify-content: center"
-      >
-        <li class="nav-item" role="presentation">
-            <button
-            class="nav-link active"
-            id="home-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#home-tab-pane"
-            type="button"
-            role="tab"
-            aria-controls="home-tab-pane"
-            aria-selected="true"
-            style="color: rgb(30, 154, 92);"
-            onfocus="this.style.color='rgb(30, 154, 92)';"
-            onblur="this.style.color='gray';"
-          >
-            Appointments
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="profile-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#profile-tab-pane"
-            type="button"
-            role="tab"
-            aria-controls="profile-tab-pane"
-            aria-selected="false"
-            style="color: gray;"
-            onfocus="this.style.color='rgb(30, 154, 92)';" 
-            onblur="this.style.color='gray';"
-          >
-            Meal Plans
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button
-            class="nav-link"
-            id="contact-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#contact-tab-pane"
-            type="button"
-            role="tab"
-            aria-controls="contact-tab-pane"
-            aria-selected="false"
-           style="color: gray;"
-            onfocus="this.style.color='rgb(30, 154, 92)';" 
-            onblur="this.style.color='gray';"
-          >
-            Health Goals
-          </button>
-        </li>
-      </ul>
-    </div>
-  </div>
+ 
 
-  <div class="tab-content" id="myTabContent">
-    <div
-      class="tab-pane fade show active"
-      id="home-tab-pane"
-      role="tabpanel"
-      aria-labelledby="home-tab"
-      tabindex="0"
-    >
-      <div class="appot container">
-        <h2 class="mb-4">Manage Appointments</h2>
 
-        <div id="content">
-          <form id="appointment-form" class="mb-3">
-            <div class="mb-2">
-              <input
-                type="text"
-                id="appointment-title"
-                class="form-control"
-                placeholder="Appointment Title"
-                required
-              />
-            </div>
-            <div class="mb-2">
-              <input
-                type="datetime-local"
-                id="appointment-date"
-                class="form-control"
-                required
-              />
-            </div>
-            <button type="submit" class="btn btn-primary">
-              Add Appointment
-            </button>
-          </form>
 
-          <ul id="appointments-list" class="list-group"></ul>
-        </div>
-      </div>
-    </div>
-    <div
-      class="tab-pane fade"
-      id="profile-tab-pane"
-      role="tabpanel"
-      aria-labelledby="profile-tab"
-      tabindex="0"
-    >
-      <div class="mealPlan container">
-        <h2 class="mb-4" style="text-align: center">Your Meal Plans</h2>
-        <div class="meal-plans-list">
-          <!-- Meal plans will be dynamically loaded here -->
-        </div>
-      </div>
-    </div>
-    <div
-      class="tab-pane fade"
-      id="contact-tab-pane"
-      role="tabpanel"
-      aria-labelledby="contact-tab"
-      tabindex="0"
-    >
-      <div class="healthGoals container">
-        <h2 class="mb-4" style="text-align: center">Your Health Goals</h2>
-        <div class="goals-list">
-          <!-- Health goals will be dynamically loaded here -->
-        </div>
-            </div>
-          </div>
-        </div>
-
-  <!-- Meal Plan Modal -->
-  <div class="modal fade" id="mealPlanModal" tabindex="-1" aria-labelledby="mealPlanModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="mealPlanModalLabel">Meal Plan Details</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-        <div class="modal-body">
-          <!-- Meal plan details will be dynamically loaded here -->
-              </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- Required Scripts -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -291,6 +146,13 @@
           localStorage.clear();
           window.location.href = '/';
         }
+      });
+    }
+
+    // Make appointment request function available
+    window.submitAppointmentRequest = function() {
+      import('./dashboard.js').then(module => {
+        module.requestAppointment();
       });
     }
   </script>
@@ -339,5 +201,41 @@
   
   .tab-content {
     min-height: 400px;
+  }
+
+  .table th {
+    background-color: #f8f9fa;
+  }
+  
+  .table td {
+    vertical-align: middle;
+  }
+  
+  .status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+  }
+  
+  .status-confirmed {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+
+  .clientHeroVid {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+
+  .clientHero {
+    margin-bottom: 40px;
   }
 </style>

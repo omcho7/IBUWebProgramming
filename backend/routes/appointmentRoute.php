@@ -166,9 +166,9 @@ Flight::route('GET /backend/appointments/user/@userId', function($userId) use ($
         Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
         
         $currentUser = Flight::get('user');
-        $decoded = Flight::get('decoded_token');
+        error_log("Current user from Flight: " . print_r($currentUser, true));
         
-        if (!$currentUser && !$decoded) {
+        if (!$currentUser) {
             Flight::json([
                 'success' => false,
                 'error' => 'User not authenticated'
@@ -176,48 +176,25 @@ Flight::route('GET /backend/appointments/user/@userId', function($userId) use ($
             return;
         }
 
-        // Get user data from either direct object, nested user property, or decoded token
-        $userData = null;
-        if (is_object($currentUser)) {
-            $userData = isset($currentUser->user) ? $currentUser->user : $currentUser;
-        } elseif (is_array($currentUser)) {
-            $userData = isset($currentUser['user']) ? $currentUser['user'] : $currentUser;
-        } elseif ($decoded && isset($decoded->user)) {
-            $userData = $decoded->user;
-        }
-
-        if (!$userData || !isset($userData->role)) {
-            Flight::json([
-                'success' => false,
-                'error' => 'Invalid user data structure',
-                'debug' => [
-                    'current_user' => $currentUser,
-                    'decoded_token' => $decoded
-                ]
-            ], 401);
-            return;
-        }
-        
         // Clients can only view their own appointments
-        if ($userData->role === Roles::CLIENT && $userData->id != $userId) {
+        if ($currentUser->role === Roles::CLIENT && $currentUser->id != $userId) {
             Flight::json([
                 'success' => false,
                 'error' => 'You can only view your own appointments'
             ], 403);
             return;
         }
-        
+
         $appointments = $appointmentsService->getAppointmentsByUserId($userId);
         Flight::json([
             'success' => true,
-            'data' => $appointments || [] // Return empty array if null
+            'data' => $appointments
         ]);
     } catch (Exception $e) {
-        error_log("Error in /backend/appointments/user: " . $e->getMessage());
         Flight::json([
             'success' => false,
             'error' => $e->getMessage()
-        ], 500);
+        ], 400);
     }
 });
 

@@ -2,7 +2,8 @@
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-Flight::group('/auth', function() {
+// Register routes for both /auth and /backend/auth paths
+$authRoutes = function() {
     /**
      * @OA\Post(
      *     path="/auth/register",
@@ -77,4 +78,8 @@ Flight::group('/auth', function() {
             Flight::halt(401, json_encode($response));
         }
     });
-});
+};
+
+// Register routes for both paths
+Flight::group('/auth', $authRoutes);
+Flight::group('/backend/auth', $authRoutes);

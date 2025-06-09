@@ -20,5 +20,26 @@ class UserDao extends BaseDao {
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
+    public function deleteUser($id) {
+        // First check if user exists and is a client
+        $stmt = $this->connection->prepare("SELECT role FROM " . $this->table . " WHERE id = :id");
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        $user = $stmt->fetch();
+
+        if (!$user) {
+            throw new Exception("User not found");
+        }
+
+        if ($user['role'] !== 'Client') {
+            throw new Exception("Only clients can be deleted");
+        }
+
+        // Delete the user
+        $stmt = $this->connection->prepare("DELETE FROM " . $this->table . " WHERE id = :id");
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
+    }
 }
 ?>

@@ -1,26 +1,65 @@
-<div class="container">
-  <div class="row justify-content-center mt-5">
-    <div class="col-md-6 col-lg-4">
-      <div class="card">
-        <div class="card-body">
-          <h2 class="text-center mb-4">Login</h2>
-          <form id="loginForm" method="POST">
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-            <div class="mb-3">
-              <label for="password" class="form-label">Password</label>
-              <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Login</button>
-          </form>
-          <div class="text-center mt-3">
-            <p>Don't have an account? <a href="signup.html">Register here</a></p>
-          </div>
-          
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <span class="d-flex align-items-center justify-content-center"
+        ><button
+          onclick="navigate('/home')"
+          type="button"
+          class="backArrow"
+          style="transform: translateX(-75px)"
+        >
+          <i class="bi bi-arrow-left"></i>
+        </button>
+        <h2 class="text-center" style="transform: translateX(-50px)">
+          Login
+        </h2></span
+      >
+      <form id="loginForm" class="loginForm">
+        <div class="form-group loginGroup">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            placeholder="Enter your email"
+            required
+          />
         </div>
+        <div class="form-group loginGroup">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          class="btn btn-primary btn-block loginBtn"
+        >
+          Login
+        </button>
+      </form>
+      <div class="text-center mt-3">
+        <p>
+          Don't have an account?
+          <a class="nav-link" onclick="navigate('signup')">Register here</a>
+        </p>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Initialize login form -->
+<script type="module">
+  import LoginService from '../services/LoginService.js';
+  
+  // Initialize form when document is ready
+  $(document).ready(function() {
+    LoginService.initLoginForm();
+  });
+</script>

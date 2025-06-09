@@ -329,6 +329,16 @@ const RegisterService = {
                 console.log('Login response:', result);
                 if (result && result.success) {
                     localStorage.setItem("user_token", result.data.token);
+                    // Store the user data separately
+                    if (result.data.user) {
+                        localStorage.setItem("user_data", JSON.stringify(result.data.user));
+                    } else {
+                        // If user data is not in the response, extract it from the token
+                        const decoded = Utils.parseJwt(result.data.token);
+                        if (decoded && decoded.user) {
+                            localStorage.setItem("user_data", JSON.stringify(decoded.user));
+                        }
+                    }
                     toastr.success('Registration successful!');
                     // Use a small delay to ensure token is saved before navigation
                     setTimeout(function() {

@@ -42,20 +42,14 @@ const UserService = {
                     const user = Utils.parseJwt(result.data.token);
                     console.log('Parsed user data:', user);
                     
-                    // Extract user role from token
-                    const role = user.role || (user.user && user.user.role);
-                    console.log('User role:', role);
-                    
-                    switch(role) {
-                        case 'Client':
-                            navigate('client/Cdashboard');
-                            break;
-                        case 'Nutritionist':
-                            navigate('admin/Adashboard');
-                            break;
-                        default:
-                            navigate('client/Cdashboard');
+                    // Determine the dashboard URL based on user role
+                    let dashboardUrl = 'pages/client/Cdashboard.html'; // Default to client dashboard
+                    if (user.user && user.user.role === 'Nutritionist') {
+                        dashboardUrl = 'pages/admin/Adashboard.html';
                     }
+                    
+                    console.log("Attempting redirect to:", dashboardUrl);
+                    window.location.href = dashboardUrl;
                 } else {
                     toastr.error(result.message || 'Login failed');
                 }
@@ -177,7 +171,7 @@ const UserService = {
             }
         }
         
-        RestClient.get('users', 
+        RestClient.get('users/clients', 
             { 
                 headers: { 
                     'Authorization': `Bearer ${token}`,

@@ -1,39 +1,57 @@
 <?php
-require_once 'BaseService.php';
-require_once 'backend\dao\ContactFormDao.php';
+require_once __DIR__ . '/../dao/ContactFormDao.php';
 
-class ContactFormService extends BaseService {
+class ContactFormService {
+    private $contactFormDao;
+
     public function __construct() {
-        parent::__construct(new ContactFormDao());
+        $this->contactFormDao = new ContactFormDao();
     }
 
     public function submitContactForm($data) {
-        
-        if (empty($data['fullName']) || empty($data['email']) || empty($data['topic']) || empty($data['message'])) {
-            throw new Exception("Missing required fields: fullName, email, topic, or message.");
+        // Validate required fields
+        $requiredFields = ['fullName', 'email', 'topic', 'message'];
+        foreach ($requiredFields as $field) {
+            if (empty($data[$field])) {
+                throw new Exception("Missing required field: $field");
+            }
         }
 
-        
+        // Validate email format
         if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-            throw new Exception("Invalid email format.");
+            throw new Exception("Invalid email format");
         }
 
-        
-        $allowedTopics = ['Consultation', 'Meal Plans', 'Support', 'Other'];
-        if (!in_array($data['topic'], $allowedTopics)) {
-            throw new Exception("Invalid topic. Allowed topics are: " . implode(', ', $allowedTopics));
+        // Validate topic
+        $validTopics = ['Consultation', 'Meal Plans', 'Support', 'Other'];
+        if (!in_array($data['topic'], $validTopics)) {
+            throw new Exception("Invalid topic selected");
         }
 
-        
-        return $this->dao->insert($data);
+        try {
+            $id = $this->contactFormDao->add($data);
+            return [
+                'success' => true,
+                'message' => 'Contact form submitted successfully',
+                'id' => $id
+            ];
+        } catch (PDOException $e) {
+            error_log("Error in ContactFormService::submitContactForm: " . $e->getMessage());
+            throw new Exception("Failed to submit contact form");
+        }
     }
 
-    public function getAllSubmissions() {
-        return $this->dao->getAll();
+    public function getAllContactForms() {
+        try {
+            return $this->contactFormDao->getAll();
+        } catch (PDOException $e) {
+            error_log("Error in ContactFormService::getAllContactForms: " . $e->getMessage());
+            throw new Exception("Failed to retrieve contact forms");
+        }
     }
 
     public function getSubmissionById($id) {
-        $submission = $this->dao->getById($id);
+        $submission = $this->contactFormDao->getById($id);
         if (!$submission) {
             throw new Exception("Contact form submission not found.");
         }
@@ -41,11 +59,11 @@ class ContactFormService extends BaseService {
     }
 
     public function deleteSubmission($id) {
-        $submission = $this->dao->getById($id);
+        $submission = $this->contactFormDao->getById($id);
         if (!$submission) {
             throw new Exception("Contact form submission not found.");
         }
-        return $this->dao->delete($id);
+        return $this->contactFormDao->delete($id);
     }
 
     public function sendAcknowledgmentEmail($email) {

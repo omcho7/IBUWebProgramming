@@ -39,7 +39,8 @@ Flight::route('/*', function() {
         '/debug/db-test',
         '/debug/health-goals/user', // For health goals retrieval
         '/debug/update-healthgoal', // For updating health goals
-        '/debug/add-healthgoal'     // For adding health goals
+        '/debug/add-healthgoal',    // For adding health goals
+        '/backend/contact-form'     // For contact form submissions
     ];
     
     $currentUrl = rtrim(strtok(Flight::request()->url, '?'), '/');
@@ -109,10 +110,43 @@ Flight::route('/*', function() {
         }
 
         $token = substr($authHeader, 7);
-        error_log("Token received: " . $token);
+        error_log("Token received: " . substr($token, 0, 20) . "...");
         
-        // Use middleware to verify token and set user data
-        Flight::auth_middleware()->verifyToken($token);
+        // Decode and verify token
+        $decoded = JWT::decode($token, new Key(Config::JWT_SECRET(), 'HS256'));
+        error_log("Decoded token data: " . print_r($decoded, true));
+        
+        // Store user data in Flight
+        if (isset($decoded->user)) {
+            // Store the decoded token and user data as objects
+            Flight::set('decoded_token', $decoded);
+            Flight::set('user', $decoded->user);
+            
+            error_log("User data stored in Flight: " . print_r($decoded->user, true));
+            error_log("Decoded token stored in Flight: " . print_r($decoded, true));
+            
+            // Verify the data was stored
+            $storedUser = Flight::get('user');
+            $storedToken = Flight::get('decoded_token');
+            error_log("Verification - Stored user data: " . print_r($storedUser, true));
+            error_log("Verification - Stored token data: " . print_r($storedToken, true));
+            
+            // Also store in session for persistence
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            $_SESSION['user'] = $decoded->user;
+            $_SESSION['decoded_token'] = $decoded;
+            
+            error_log("User data stored in session: " . print_r($_SESSION['user'], true));
+        } else {
+            error_log("Token missing user data");
+            Flight::halt(401, json_encode([
+                'success' => false,
+                'error' => 'Invalid token structure - missing user data'
+            ]));
+            return false;
+        }
         
         return true;
         

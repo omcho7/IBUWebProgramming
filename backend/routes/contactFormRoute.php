@@ -6,7 +6,7 @@ $contactFormService = new ContactFormService();
 
 /**
  * @OA\Post(
- *     path="/contact-form",
+ *     path="/backend/contact-form",
  *     tags={"Contact Form"},
  *     summary="Submit a contact form",
  *     @OA\RequestBody(
@@ -29,7 +29,7 @@ $contactFormService = new ContactFormService();
  *     )
  * )
  */
-Flight::route('POST /contact-form', function() use ($contactFormService) {
+Flight::route('POST /backend/contact-form', function() use ($contactFormService) {
     // Public route - no authentication required for submissions
     $data = Flight::request()->data->getData();
     try {
@@ -48,7 +48,7 @@ Flight::route('POST /contact-form', function() use ($contactFormService) {
 
 /**
  * @OA\Get(
- *     path="/contact-form",
+ *     path="/backend/contact-form",
  *     tags={"Contact Form"},
  *     summary="Get all contact form submissions",
  *     @OA\Response(
@@ -61,7 +61,7 @@ Flight::route('POST /contact-form', function() use ($contactFormService) {
  *     )
  * )
  */
-Flight::route('GET /contact-form', function() use ($contactFormService) {
+Flight::route('GET /backend/contact-form', function() use ($contactFormService) {
     // Only admins can view all submissions
     Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     
@@ -75,7 +75,7 @@ Flight::route('GET /contact-form', function() use ($contactFormService) {
 
 /**
  * @OA\Get(
- *     path="/contact-form/{id}",
+ *     path="/backend/contact-form/{id}",
  *     tags={"Contact Form"},
  *     summary="Get a specific contact form submission by ID",
  *     @OA\Parameter(
@@ -98,7 +98,7 @@ Flight::route('GET /contact-form', function() use ($contactFormService) {
  *     )
  * )
  */
-Flight::route('GET /contact-form/@id', function($id) use ($contactFormService) {
+Flight::route('GET /backend/contact-form/@id', function($id) use ($contactFormService) {
     // Only admins can view specific submissions
     Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     
@@ -112,7 +112,7 @@ Flight::route('GET /contact-form/@id', function($id) use ($contactFormService) {
 
 /**
  * @OA\Delete(
- *     path="/contact-form/{id}",
+ *     path="/backend/contact-form/{id}",
  *     tags={"Contact Form"},
  *     summary="Delete a contact form submission by ID",
  *     @OA\Parameter(
@@ -135,7 +135,7 @@ Flight::route('GET /contact-form/@id', function($id) use ($contactFormService) {
  *     )
  * )
  */
-Flight::route('DELETE /contact-form/@id', function($id) use ($contactFormService) {
+Flight::route('DELETE /backend/contact-form/@id', function($id) use ($contactFormService) {
     // Only admins can delete submissions
     Flight::auth_middleware()->authorizeRole(Roles::ADMIN);
     

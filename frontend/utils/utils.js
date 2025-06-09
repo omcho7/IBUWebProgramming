@@ -126,30 +126,59 @@ let Utils = {
     },
 
     getUser: function() {
+        // First try to get user data from localStorage
+        const storedUserData = localStorage.getItem('user_data');
+        if (storedUserData) {
+            try {
+                const userData = JSON.parse(storedUserData);
+                console.log('Retrieved user data from localStorage:', userData);
+                return userData;
+            } catch (e) {
+                console.error('Error parsing stored user data:', e);
+                // Don't clear the data, just log the error
+            }
+        }
+
+        // Fallback to token if no stored user data or parsing failed
         const token = localStorage.getItem('user_token');
         if (!token) {
+            console.error('No token found in localStorage');
             return null;
         }
         
         try {
             const decoded = this.parseJwt(token);
-            if (decoded.user) {
-                return decoded.user;
-            } else if (decoded.role) {
-                return decoded;
-            } else {
-                console.warn('JWT token does not contain user data in expected format');
-                return decoded;
+            console.log('Decoded token:', decoded);
+            
+            if (!decoded) {
+                console.error('Failed to decode token');
+                return null;
             }
+
+            // The token should have a nested user structure
+            if (decoded.user && decoded.user.role) {
+                console.log('Found nested user structure:', decoded.user);
+                // Store the user data for future use
+                localStorage.setItem('user_data', JSON.stringify(decoded.user));
+                return decoded.user;
+            }
+            
+            console.error('Token missing required user data structure');
+            return null;
         } catch (e) {
-            console.error('Error getting user from token:', e);
+            console.error('Error parsing token:', e);
             return null;
         }
     },
 
     getUserRole: function() {
         const user = this.getUser();
-        return user ? user.role : null;
+        console.log('Getting role for user:', user);
+        if (!user) {
+            console.error('No user data available');
+            return null;
+        }
+        return user.role;
     },
 
     isNutritionist: function() {
@@ -166,6 +195,7 @@ let Utils = {
 
     logout: function() {
         localStorage.removeItem('user_token');
+        localStorage.removeItem('user_data');
         window.location.href = '/login.html';
     },
 

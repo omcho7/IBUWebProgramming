@@ -90,26 +90,70 @@ function updateAppointmentsCard(appointments) {
         card.textContent = 'No appointments scheduled yet.';
         return;
     }
+
+    console.log('All appointments:', appointments);
     
-    const upcomingAppointments = appointments.filter(apt => new Date(apt.date) > new Date());
+    // Show all appointments, sorted by date
+    const sortedAppointments = [...appointments].sort((a, b) => {
+        const dateA = new Date(a.date + 'T' + a.time);
+        const dateB = new Date(b.date + 'T' + b.time);
+        return dateA - dateB;
+    });
+
+    console.log('Sorted appointments:', sortedAppointments);
+    
     const pendingAppointments = appointments.filter(apt => apt.status === 'Pending');
+    
+    // Format date and time for display
+    const formatDateTime = (date, time) => {
+        const appointmentDate = new Date(date + 'T' + time);
+        return appointmentDate.toLocaleString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit'
+        });
+    };
+
+    // Get status badge class
+    const getStatusBadgeClass = (status) => {
+        switch(status.toLowerCase()) {
+            case 'confirmed': return 'bg-success';
+            case 'pending': return 'bg-warning';
+            case 'denied': return 'bg-danger';
+            default: return 'bg-secondary';
+        }
+    };
     
     card.innerHTML = `
         <div class="appointment-stats">
             <div class="d-flex justify-content-between mb-2">
-                <span>Upcoming: <strong>${upcomingAppointments.length}</strong></span>
+                <span>Total: <strong>${appointments.length}</strong></span>
                 <span>Pending: <strong>${pendingAppointments.length}</strong></span>
             </div>
-            <div class="progress" style="height: 10px;">
+            <div class="progress mb-3" style="height: 10px;">
                 <div class="progress-bar bg-primary" role="progressbar" 
-                    style="width: ${(upcomingAppointments.length / appointments.length) * 100}%" 
-                    aria-valuenow="${upcomingAppointments.length}" 
+                    style="width: ${(pendingAppointments.length / appointments.length) * 100}%" 
+                    aria-valuenow="${pendingAppointments.length}" 
                     aria-valuemin="0" 
                     aria-valuemax="${appointments.length}">
                 </div>
             </div>
-            <div class="text-center mt-1">
-                <small>Total Appointments: ${appointments.length}</small>
+            <div class="appointments-list">
+                ${sortedAppointments.map(apt => `
+                    <div class="appointment-item mb-2 p-2 border-bottom">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold">${formatDateTime(apt.date, apt.time)}</div>
+                                <small class="text-muted">Nutritionist ID: ${apt.nutritionist_id}</small>
+                            </div>
+                            <span class="badge ${getStatusBadgeClass(apt.status)}">
+                                ${apt.status}
+                            </span>
+                        </div>
+                    </div>
+                `).join('')}
             </div>
         </div>
     `;

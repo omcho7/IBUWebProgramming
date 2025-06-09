@@ -39,7 +39,8 @@ Flight::route('/*', function() {
         '/debug/db-test',
         '/debug/health-goals/user', // For health goals retrieval
         '/debug/update-healthgoal', // For updating health goals
-        '/debug/add-healthgoal'     // For adding health goals
+        '/debug/add-healthgoal',    // For adding health goals
+        '/backend/contact-form'     // For contact form submissions
     ];
     
     $currentUrl = rtrim(strtok(Flight::request()->url, '?'), '/');

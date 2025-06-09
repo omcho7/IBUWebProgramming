@@ -6,16 +6,26 @@ const HealthGoalsService = {
         RestClient.get('health-goals', callback, errorCallback);
     },
 
-    getHealthGoalById: function(id, callback, errorCallback) {
-        RestClient.get(`health-goals/${id}`, callback, errorCallback);
+    getHealthGoalById: function(id) {
+        return new Promise((resolve, reject) => {
+            RestClient.get(`health-goals/${id}`, 
+                (response) => resolve(response),
+                (error) => reject(error)
+            );
+        });
     },
 
     createHealthGoal: function(data, callback, errorCallback) {
         RestClient.post('health-goals', data, callback, errorCallback);
     },
 
-    updateHealthGoal: function(id, data, callback, errorCallback) {
-        RestClient.put(`health-goals/${id}`, data, callback, errorCallback);
+    updateHealthGoal: function(id, data) {
+        return new Promise((resolve, reject) => {
+            RestClient.put(`health-goals/${id}`, data,
+                (response) => resolve(response),
+                (error) => reject(error)
+            );
+        });
     },
 
     deleteHealthGoal: function(id, callback, errorCallback) {

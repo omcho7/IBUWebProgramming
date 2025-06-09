@@ -232,11 +232,53 @@ function updateHealthGoalsCard(goals) {
     const completedGoals = goals.filter(goal => parseInt(goal.current_value) >= parseInt(goal.target_value)).length;
     const inProgressGoals = goals.length - completedGoals;
     
-    const totalProgress = goals.reduce((sum, goal) => {
-        const progress = Math.min((goal.current_value / goal.target_value) * 100, 100);
-        return sum + progress;
-    }, 0);
-    const averageProgress = Math.round(totalProgress / goals.length);
+    // Calculate progress for each goal
+    const goalsWithProgress = goals.map(goal => {
+        const current = parseFloat(goal.current_value);
+        const target = parseFloat(goal.target_value);
+        const progress = Math.min((current / target) * 100, 100);
+        return {
+            ...goal,
+            progress: Math.round(progress)
+        };
+    });
+
+    // Sort goals by deadline
+    const sortedGoals = [...goalsWithProgress].sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+    
+    // Format date for display
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        });
+    };
+
+    // Get goal icon based on type
+    const getGoalIcon = (goalType) => {
+        const icons = {
+            'LoseWeight': '⚖️',
+            'BuildMuscle': '💪',
+            'ImproveStamina': '🏃',
+            'EatHealthier': '🥗',
+            'ReduceStress': '🧘',
+            'ImproveSleep': '😴',
+            'IncreaseEnergy': '⚡',
+            'MentalClarity': '🧠',
+            'BoostImmunity': '🛡️'
+        };
+        return icons[goalType] || '🎯';
+    };
+
+    // Get progress bar color based on progress
+    const getProgressColor = (progress) => {
+        if (progress >= 100) return 'bg-success';
+        if (progress >= 70) return 'bg-info';
+        if (progress >= 40) return 'bg-warning';
+        return 'bg-danger';
+    };
     
     card.innerHTML = `
         <div class="goal-stats">
@@ -244,16 +286,44 @@ function updateHealthGoalsCard(goals) {
                 <span>Completed: <strong>${completedGoals}</strong></span>
                 <span>In Progress: <strong>${inProgressGoals}</strong></span>
             </div>
-            <div class="progress" style="height: 10px;">
+            <div class="progress mb-3" style="height: 10px;">
                 <div class="progress-bar bg-success" role="progressbar" 
-                    style="width: ${averageProgress}%" 
-                    aria-valuenow="${averageProgress}" 
+                    style="width: ${(completedGoals / goals.length) * 100}%" 
+                    aria-valuenow="${completedGoals}" 
                     aria-valuemin="0" 
-                    aria-valuemax="100">
+                    aria-valuemax="${goals.length}">
                 </div>
             </div>
-            <div class="text-center mt-1">
-                <small>Overall Progress: ${averageProgress}%</small>
+            <div class="goals-list">
+                ${sortedGoals.map(goal => `
+                    <div class="goal-item mb-2 p-2 border-bottom">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="fw-bold">
+                                    ${getGoalIcon(goal.goal_type)} ${goal.goal_type.replace(/([A-Z])/g, ' $1').trim()}
+                                </div>
+                                <div class="small text-muted">
+                                    Current: ${goal.current_value} | Target: ${goal.target_value}
+                                </div>
+                                <div class="small text-muted">
+                                    Deadline: ${formatDate(goal.deadline)}
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="progress" style="width: 60px; height: 6px;">
+                                    <div class="progress-bar ${getProgressColor(goal.progress)}" 
+                                        role="progressbar" 
+                                        style="width: ${goal.progress}%" 
+                                        aria-valuenow="${goal.progress}" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100">
+                                    </div>
+                                </div>
+                                <small class="text-muted">${goal.progress}%</small>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
             </div>
         </div>
     `;

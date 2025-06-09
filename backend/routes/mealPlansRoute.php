@@ -8,6 +8,7 @@ $mealPlansService = new MealPlansService();
  * @OA\Post(
  *     path="/backend/meal-plans",
  *     tags={"Meal Plans"},
+ *     security={{"ApiKey": {}}},
  *     summary="Create a new meal plan",
  *     @OA\RequestBody(
  *         required=true,
@@ -36,7 +37,7 @@ $mealPlansService = new MealPlansService();
  */
 Flight::route('POST /backend/meal-plans', function() use ($mealPlansService) {
     // Only nutritionists can create meal plans
-    Flight::auth_middleware()->authorizeRole(Roles::NUTRITIONIST);
+    Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
     
     $data = Flight::request()->data->getData();
     
@@ -50,9 +51,15 @@ Flight::route('POST /backend/meal-plans', function() use ($mealPlansService) {
     
     try {
         $mealPlan = $mealPlansService->createMealPlan($data);
-        Flight::json($mealPlan);
+        Flight::json([
+            'success' => true,
+            'data' => $mealPlan
+        ]);
     } catch (Exception $e) {
-        Flight::json(['error' => $e->getMessage()], 400);
+        Flight::json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 400);
     }
 });
 
@@ -60,6 +67,7 @@ Flight::route('POST /backend/meal-plans', function() use ($mealPlansService) {
  * @OA\Put(
  *     path="/backend/meal-plans/{id}",
  *     tags={"Meal Plans"},
+ *     security={{"ApiKey": {}}},
  *     summary="Update a meal plan",
  *     @OA\Parameter(
  *         name="id",
@@ -78,6 +86,7 @@ Flight::route('POST /backend/meal-plans', function() use ($mealPlansService) {
  * )
  */
 Flight::route('PUT /backend/meal-plans/@id', function($id) use ($mealPlansService) {
+    Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
     try {
         $data = Flight::request()->data->getData();
         $mealPlan = $mealPlansService->updateMealPlan($id, $data);
@@ -94,7 +103,30 @@ Flight::route('PUT /backend/meal-plans/@id', function($id) use ($mealPlansServic
     }
 });
 
+/**
+ * @OA\Delete(
+ *     path="/backend/meal-plans/{id}",
+ *     tags={"Meal Plans"},
+ *     security={{"ApiKey": {}}},
+ *     summary="Delete a meal plan",
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="integer", example=1)
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Meal plan deleted successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=403,
+ *         description="Forbidden - only nutritionists can delete meal plans"
+ *     )
+ * )
+ */
 Flight::route('DELETE /backend/meal-plans/@id', function($id) use ($mealPlansService) {
+    Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
     try {
         $result = $mealPlansService->deleteMealPlan($id);
         if ($result) {
@@ -137,12 +169,7 @@ Flight::route('DELETE /backend/meal-plans/@id', function($id) use ($mealPlansSer
  *         description="Forbidden - can only view your own meal plans or your clients' plans"
  *     )
  * )
- * 
- * 
- * 
  */
-
-
 Flight::route('GET /backend/meal-plans/client/@clientId', function($clientId) use ($mealPlansService) {
     try {
         // Both clients and nutritionists can view meal plans
@@ -193,6 +220,7 @@ Flight::route('GET /backend/meal-plans/client/@clientId', function($clientId) us
  * @OA\Get(
  *     path="/backend/meal-plans",
  *     tags={"Meal Plans"},
+ *     security={{"ApiKey": {}}},
  *     summary="Get all meal plans",
  *     @OA\Response(
  *         response=200,
@@ -205,6 +233,7 @@ Flight::route('GET /backend/meal-plans/client/@clientId', function($clientId) us
  * )
  */
 Flight::route('GET /backend/meal-plans', function() use ($mealPlansService) {
+    Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
     try {
         $mealPlans = $mealPlansService->getAllMealPlans();
         Flight::json([

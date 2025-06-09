@@ -8,6 +8,7 @@ $appointmentsService = new AppointmentsService();
  * @OA\Post(
  *     path="/backend/appointments",
  *     tags={"Appointments"},
+ *     security={{"ApiKey": {}}},
  *     summary="Create a new appointment",
  *     @OA\RequestBody(
  *         required=true,
@@ -34,24 +35,37 @@ $appointmentsService = new AppointmentsService();
  * )
  */
 Flight::route('POST /backend/appointments', function() use ($appointmentsService) {
-    // Only clients can create appointments
-    Flight::auth_middleware()->authorizeRole(Roles::CLIENT);
+    // Both clients and nutritionists can create appointments
+    Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
     
     $data = Flight::request()->data->getData();
-    
-    // Verify the client is creating appointment for themselves
     $currentUser = Flight::get('user');
-    if ($currentUser['id'] != $data['user_id']) {
-        Flight::halt(403, json_encode([
+    
+    // If the current user is a client, they can only create appointments for themselves
+    if ($currentUser->role === Roles::CLIENT && $currentUser->id != $data['user_id']) {
+        Flight::json([
+            'success' => false,
             'error' => 'You can only create appointments for yourself'
-        ]));
+        ], 403);
+        return;
+    }
+    
+    // If the current user is a nutritionist, they can create appointments for any client
+    if ($currentUser->role === Roles::NUTRITIONIST) {
+        $data['nutritionist_id'] = $currentUser->id;
     }
     
     try {
         $appointment = $appointmentsService->createAppointment($data);
-        Flight::json($appointment);
+        Flight::json([
+            'success' => true,
+            'data' => $appointment
+        ]);
     } catch (Exception $e) {
-        Flight::json(['error' => $e->getMessage()], 400);
+        Flight::json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 400);
     }
 });
 
@@ -59,6 +73,7 @@ Flight::route('POST /backend/appointments', function() use ($appointmentsService
  * @OA\Put(
  *     path="/backend/appointments/{id}/status",
  *     tags={"Appointments"},
+ *     security={{"ApiKey": {}}},
  *     summary="Update appointment status",
  *     @OA\Parameter(
  *         name="id",
@@ -88,11 +103,13 @@ Flight::route('POST /backend/appointments', function() use ($appointmentsService
  * )
  */
 Flight::route('PUT /backend/appointments/@id/status', function($id) use ($appointmentsService) {
+    Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
     try {
         $data = Flight::request()->data->getData();
         $appointment = $appointmentsService->updateAppointmentStatus($id, $data['status']);
         Flight::json([
             'success' => true,
+            'data' => $appointment,
             'message' => 'Appointment status updated successfully'
         ]);
     } catch (Exception $e) {
@@ -107,6 +124,7 @@ Flight::route('PUT /backend/appointments/@id/status', function($id) use ($appoin
  * @OA\Delete(
  *     path="/backend/appointments/{id}",
  *     tags={"Appointments"},
+ *     security={{"ApiKey": {}}},
  *     summary="Delete an appointment",
  *     @OA\Parameter(
  *         name="id",
@@ -125,12 +143,20 @@ Flight::route('PUT /backend/appointments/@id/status', function($id) use ($appoin
  * )
  */
 Flight::route('DELETE /backend/appointments/@id', function($id) use ($appointmentsService) {
+    Flight::auth_middleware()->authorizeRoles([Roles::CLIENT, Roles::NUTRITIONIST]);
     try {
         $result = $appointmentsService->deleteAppointment($id);
-        Flight::json([
-            'success' => true,
-            'message' => 'Appointment deleted successfully'
-        ]);
+        if ($result) {
+            Flight::json([
+                'success' => true,
+                'message' => 'Appointment deleted successfully'
+            ]);
+        } else {
+            Flight::json([
+                'success' => false,
+                'error' => 'Failed to delete appointment'
+            ], 404);
+        }
     } catch (Exception $e) {
         Flight::json([
             'success' => false,
@@ -143,6 +169,7 @@ Flight::route('DELETE /backend/appointments/@id', function($id) use ($appointmen
  * @OA\Get(
  *     path="/backend/appointments/user/{userId}",
  *     tags={"Appointments"},
+ *     security={{"ApiKey": {}}},
  *     summary="Get appointments by user ID",
  *     @OA\Parameter(
  *         name="userId",

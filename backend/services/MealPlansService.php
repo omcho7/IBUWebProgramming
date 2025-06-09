@@ -17,7 +17,7 @@ class MealPlansService extends BaseService {
             if (isset($data['meals']) && is_array($data['meals'])) {
                 $data['meals'] = json_encode($data['meals']);
             }
-            return $this->mealPlansDao->create($data);
+            return $this->mealPlansDao->add($data);
         } catch (Exception $e) {
             error_log("Error creating meal plan: " . $e->getMessage());
             throw $e;

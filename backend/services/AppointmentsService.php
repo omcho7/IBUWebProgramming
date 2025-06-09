@@ -1,6 +1,7 @@
 <?php
 require_once 'BaseService.php';
 require_once 'backend\dao\AppointmentsDao.php';
+require_once 'backend\dao\UserDao.php';
 
 class AppointmentsService extends BaseService {
     private $appointmentsDao;
@@ -16,12 +17,30 @@ class AppointmentsService extends BaseService {
     }
 
     public function createAppointment($data) {
-        if (empty($data['user_id']) || empty($data['nutritionist_id']) || empty($data['date']) || empty($data['time'])) {
-            throw new Exception("Missing required fields: user_id, nutritionist_id, date, or time.");
-        }
+        try {
+            if (empty($data['user_id']) || empty($data['nutritionist_id']) || empty($data['date']) || empty($data['time'])) {
+                throw new Exception("Missing required fields: user_id, nutritionist_id, date, or time.");
+            }
 
-        $data['status'] = 'Pending';
-        return $this->appointmentsDao->insert($data);
+            // Verify that the user exists
+            $userDao = new UserDao();
+            $user = $userDao->getById($data['user_id']);
+            if (!$user) {
+                throw new Exception("User with ID {$data['user_id']} does not exist.");
+            }
+
+            // Verify that the nutritionist exists
+            $nutritionist = $userDao->getById($data['nutritionist_id']);
+            if (!$nutritionist) {
+                throw new Exception("Nutritionist with ID {$data['nutritionist_id']} does not exist.");
+            }
+
+            $data['status'] = 'Pending';
+            return $this->appointmentsDao->add($data);
+        } catch (PDOException $e) {
+            error_log("Error creating appointment: " . $e->getMessage());
+            throw new Exception("Failed to create appointment: " . $e->getMessage());
+        }
     }
 
     public function updateAppointmentStatus($id, $status) {

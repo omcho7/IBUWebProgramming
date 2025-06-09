@@ -254,9 +254,7 @@ async function loadClientHealthGoals(userId) {
                 <tr>
                     <td colspan="4" class="text-center">
                         No health goals found
-                        <button class="btn btn-sm btn-primary ms-2" onclick="addHealthGoal(${userId})">
-                            <i class="bi bi-plus"></i> Add Health Goal
-                        </button>
+                       
                     </td>
                 </tr>`;
             return;
@@ -286,9 +284,7 @@ async function loadClientHealthGoals(userId) {
         `).join('') + `
             <tr>
                 <td colspan="4" class="text-center">
-                    <button class="btn btn-sm btn-primary" onclick="addHealthGoal(${userId})">
-                        <i class="bi bi-plus"></i> Add Health Goal
-                    </button>
+                    
                 </td>
             </tr>`;
     } catch (error) {
@@ -356,7 +352,7 @@ window.addAppointment = async function() {
 
 window.addMealPlan = function(userId) {
     document.getElementById('mealPlanUserId').value = userId;
-    const mealsContainer = document.getElementById('mealsContainer');
+    const mealsContainer = document.getElementById('addMealsContainer');
     mealsContainer.innerHTML = ''; // Clear existing fields
     addMealField(); // Add initial meal field
     const modal = new bootstrap.Modal(document.getElementById('addMealPlanModal'));
@@ -370,7 +366,7 @@ window.addHealthGoal = async function() {
 
 // Add meal field to meal plan form
 window.addMealField = function(value = '', type = '') {
-    const container = document.getElementById('mealsContainer');
+    const container = document.getElementById('addMealsContainer');
     const newField = document.createElement('div');
     newField.className = 'meal-entry mb-2';
     newField.innerHTML = `
@@ -394,7 +390,6 @@ window.submitAppointment = async function() {
         const data = {
             user_id: formData.get('user_id'),
             nutritionist_id: Utils.getUser().id,
-            title: formData.get('title'),
             date: formData.get('date'),
             time: formData.get('time')
         };
@@ -403,14 +398,16 @@ window.submitAppointment = async function() {
         
         if (response.success) {
             toastr.success('Appointment created successfully');
-            bootstrap.Modal.getInstance(document.getElementById('addAppointmentModal')).hide();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addAppointmentModal'));
+            modal.hide();
+            form.reset();
             loadAllAppointments();
         } else {
             throw new Error(response.error || 'Failed to create appointment');
         }
     } catch (error) {
         console.error('Error creating appointment:', error);
-        toastr.error(error.message);
+        toastr.error(error.message || 'Failed to create appointment');
     }
 };
 
@@ -418,6 +415,12 @@ window.submitMealPlan = async function() {
     try {
         const form = document.getElementById('addMealPlanForm');
         const formData = new FormData(form);
+        
+        // Get user data from token
+        const userData = Utils.getUser();
+        if (!userData || !userData.id) {
+            throw new Error('No authentication data available');
+        }
         
         // Convert meal fields to object
         const mealTypes = formData.getAll('meal_type[]');
@@ -432,34 +435,50 @@ window.submitMealPlan = async function() {
         
         const data = {
             user_id: formData.get('user_id'),
-            nutritionist_id: Utils.getUser().id,
+            nutritionist_id: userData.id,
             title: formData.get('title'),
             description: formData.get('description'),
             meals: meals
         };
 
-        const response = await fetch(`${Constants.PROJECT_BASE_URL}meal-plans`, {
-            method: 'POST',
+        const token = localStorage.getItem('user_token');
+        if (!token) {
+            throw new Error('No authentication token found');
+        }
+
+        $.ajax({
+            url: `${Constants.PROJECT_BASE_URL}meal-plans`,
+            type: 'POST',
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('user_token')}`,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data)
+            data: JSON.stringify(data),
+            success: function(response) {
+                if (response.success) {
+                    toastr.success('Meal plan created successfully');
+                    bootstrap.Modal.getInstance(document.getElementById('addMealPlanModal')).hide();
+                    loadAllMealPlans();
+                } else {
+                    throw new Error(response.error || 'Failed to create meal plan');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                console.error('Status:', status);
+                console.error('Response:', xhr.responseText);
+                
+                let errorMessage = 'An error occurred';
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    errorMessage = response.error || errorMessage;
+                } catch (e) {
+                    console.error('Error parsing response:', e);
+                }
+                
+                throw new Error(errorMessage);
+            }
         });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to create meal plan');
-        }
-
-        const result = await response.json();
-        if (result.success) {
-            toastr.success('Meal plan created successfully');
-            bootstrap.Modal.getInstance(document.getElementById('addMealPlanModal')).hide();
-            loadAllMealPlans();
-        } else {
-            throw new Error(result.error || 'Failed to create meal plan');
-        }
     } catch (error) {
         console.error('Error creating meal plan:', error);
         toastr.error(error.message);

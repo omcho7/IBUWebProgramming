@@ -174,20 +174,15 @@
       <div class="card mb-4">
         <div class="card-body">
               <h5 class="card-title">Manage Health Goals</h5>
-              <div class="action-buttons">
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addHealthGoalModal">
-                  <i class="bi bi-plus-circle"></i> Add Health Goal
-                </button>
-              </div>
-          <table class="table table-striped">
-            <thead>
-              <tr>
+              <table class="table table-striped">
+                <thead>
+                  <tr>
                     <th>Goal Type</th>
                     <th>Details</th>
-                <th>Progress</th>
+                    <th>Progress</th>
                     <th>Actions</th>
-              </tr>
-            </thead>
+                  </tr>
+                </thead>
                 <tbody id="healthGoalsTable">
                   <tr>
                     <td colspan="4" class="text-center">Select a client to view health goals</td>
@@ -210,10 +205,9 @@
                 </div>
                 <div class="modal-body">
                     <form id="addAppointmentForm">
-                        <input type="hidden" id="appointmentUserId">
                         <div class="mb-3">
-                            <label class="form-label">Title</label>
-                            <input type="text" class="form-control" name="title" required>
+                            <label for="appointmentUserId" class="form-label">User ID</label>
+                            <input type="number" class="form-control" id="appointmentUserId" name="user_id" required placeholder="Enter the client's user ID" />
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Date</label>
@@ -279,18 +273,21 @@
                 </div>
                 <div class="modal-body">
                     <form id="addMealPlanForm">
-                        <input type="hidden" id="mealPlanUserId">
                         <div class="mb-3">
-                            <label class="form-label">Title</label>
-                            <input type="text" class="form-control" name="title" required>
+                            <label for="mealPlanUserId" class="form-label">User ID</label>
+                            <input type="number" class="form-control" id="mealPlanUserId" name="user_id" required placeholder="Enter the client's user ID" />
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Description</label>
-                            <textarea class="form-control" name="description" required></textarea>
+                            <label for="mealPlanTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="mealPlanTitle" name="title" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="mealPlanDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="mealPlanDescription" name="description" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Meals</label>
-                            <div id="mealsContainer">
+                            <div id="addMealsContainer">
                                 <!-- Meal fields will be added here dynamically -->
                             </div>
                             <button type="button" class="btn btn-sm btn-secondary" onclick="addMealField()">Add Another Meal</button>
@@ -348,48 +345,7 @@
         </div>
     </div>
 
-    <!-- Add Health Goal Modal -->
-    <div class="modal fade" id="addHealthGoalModal" tabindex="-1" aria-labelledby="addHealthGoalModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addHealthGoalModalLabel">Add Health Goal</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addHealthGoalForm">
-                        <input type="hidden" name="user_id" id="addHealthGoalUserId" />
-                        <div class="mb-3">
-                            <label for="addGoalType" class="form-label">Goal Type</label>
-                            <select class="form-select" id="addGoalType" name="goal_type" required>
-                                <option value="Weight Loss">Weight Loss</option>
-                                <option value="Muscle Gain">Muscle Gain</option>
-                                <option value="Endurance">Endurance</option>
-                                <option value="Flexibility">Flexibility</option>
-                                <option value="Strength">Strength</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="addTargetValue" class="form-label">Target Value</label>
-                            <input type="number" class="form-control" id="addTargetValue" name="target_value" required />
-                        </div>
-                        <div class="mb-3">
-                            <label for="addCurrentValue" class="form-label">Current Value</label>
-                            <input type="number" class="form-control" id="addCurrentValue" name="current_value" required />
-                        </div>
-                        <div class="mb-3">
-                            <label for="addDeadline" class="form-label">Deadline</label>
-                            <input type="date" class="form-control" id="addDeadline" name="deadline" required />
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="submitHealthGoal()">Add Goal</button>
-                </div>
-            </div>
-        </div>
-    </div>
+   
 
     <div class="footerContainer">
       <footer class="py-5">

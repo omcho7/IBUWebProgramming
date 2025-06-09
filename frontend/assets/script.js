@@ -18,7 +18,13 @@ const pageInitializers = {
   "client/Cform": "initHealthGoalsForm",
   "client/Cform2": "initAllergiesForm",
   "admin/Adashboard": "initAdminDashboard"
-  
+};
+
+// Global logout function
+window.logoutUser = function() {
+  localStorage.removeItem("user_token");
+  localStorage.removeItem("user_data");
+  navigate('home');  // Using our SPA navigation instead of direct URL
 };
 
 function navigate(page) {

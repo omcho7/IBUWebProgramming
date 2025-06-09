@@ -78,13 +78,14 @@ class BaseDao {
                 error_log("BaseDao::add success, new ID: " . $id);
                 return $this->getById($id); // Return full record
             }
-            error_log("BaseDao::add failed, error: " . print_r($stmt->errorInfo(), true));
-            return false;
+            $error = $stmt->errorInfo();
+            error_log("BaseDao::add failed, error: " . print_r($error, true));
+            throw new PDOException($error[2], $error[1]);
         } catch (PDOException $e) {
             error_log("DAO Add Error: " . $e->getMessage());
             error_log("DAO Add Error Code: " . $e->getCode());
             error_log("DAO Add Error Trace: " . $e->getTraceAsString());
-            return false;
+            throw $e;
         }
     }
 
